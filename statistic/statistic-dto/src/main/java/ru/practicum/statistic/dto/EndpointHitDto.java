@@ -1,14 +1,17 @@
 package ru.practicum.statistic.dto;
 
-import lombok.*;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Builder;
+import lombok.Setter;
+import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.net.InetAddress;
-import java.net.URI;
 import java.time.LocalDateTime;
 
 @Value
+@Builder
+@Jacksonized
 @Setter
 public class EndpointHitDto {
 
@@ -16,12 +19,13 @@ public class EndpointHitDto {
     String app;
 
     @NotBlank
-    URI uri;
+    String uri;
 
     @NotNull
-    InetAddress ip;
+    String ip;
 
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime timestamp;
 
 }

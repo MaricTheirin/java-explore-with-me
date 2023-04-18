@@ -2,16 +2,15 @@ package ru.practicum.statistic.dto;
 
 import lombok.Value;
 import javax.validation.constraints.NotBlank;
-import java.net.URI;
 
 @Value
-public class ViewStatsDto {
+public class EndpointHitsResultDto {
 
     @NotBlank
     String app;
 
     @NotBlank
-    URI uri;
+    String uri;
 
     long hits;
 
