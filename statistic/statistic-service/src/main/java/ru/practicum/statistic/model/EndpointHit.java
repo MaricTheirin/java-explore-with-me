@@ -1,10 +1,7 @@
 package ru.practicum.statistic.model;
 
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
-import java.net.InetAddress;
-import java.net.URI;
 import java.time.LocalDateTime;
 
 @Entity
@@ -22,11 +19,10 @@ public class EndpointHit {
 
     private String app;
 
-    private URI uri;
+    private String uri;
 
-    private InetAddress ip;
+    private String ip;
 
-    @CreationTimestamp
     private LocalDateTime timestamp;
 
 }
