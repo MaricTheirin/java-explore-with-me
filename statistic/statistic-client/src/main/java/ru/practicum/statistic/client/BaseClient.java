@@ -12,7 +12,7 @@ public abstract class BaseClient {
 
     protected final RestTemplate rest;
 
-    private final ParameterizedTypeReference<Object> OBJECT_PARAMETERIZED_TR =
+    private static final ParameterizedTypeReference<Object> OBJECT_PARAMETERIZED_TR =
             new ParameterizedTypeReference<>() {};
 
     public BaseClient(RestTemplate rest) {
