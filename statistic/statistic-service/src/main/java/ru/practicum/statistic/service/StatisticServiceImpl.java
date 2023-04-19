@@ -24,7 +24,7 @@ public class StatisticServiceImpl implements StatisticService {
     @Override
     public List<EndpointHitsResultDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
         List<EndpointStats> stats;
-        if (uris == null || uris.isEmpty()) {
+        if (uris.isEmpty()) {
             if (unique) {
                 stats = endpointHitRepository.findAllByTimeAndUniqueIp(start, end);
             } else {
