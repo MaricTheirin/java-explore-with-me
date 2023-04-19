@@ -14,7 +14,7 @@ public class EndpointHitDtoMapper {
 
     private static final String OBJECT_MAPPED_MESSAGE = "Выполнено преобразование объекта из {} в {}";
 
-    public static EndpointHit mapDtoToEndpointHit (EndpointHitDto endpointHitDto) {
+    public static EndpointHit mapDtoToEndpointHit(EndpointHitDto endpointHitDto) {
         EndpointHit mappedEndpointHit = new EndpointHit(
                 0L,
                 endpointHitDto.getApp(),
@@ -26,7 +26,7 @@ public class EndpointHitDtoMapper {
         return mappedEndpointHit;
     }
 
-    public static EndpointHitsResultDto mapEndpointStatsToDto (EndpointStats endpointStats) {
+    public static EndpointHitsResultDto mapEndpointStatsToDto(EndpointStats endpointStats) {
         EndpointHitsResultDto mappedDto = new EndpointHitsResultDto(
                 endpointStats.getApp(),
                 endpointStats.getUri(),

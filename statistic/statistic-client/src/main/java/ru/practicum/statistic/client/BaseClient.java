@@ -6,6 +6,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import ru.practicum.statistic.client.exception.ClientException;
+import java.util.List;
 import java.util.Map;
 
 public abstract class BaseClient {
@@ -78,7 +79,7 @@ public abstract class BaseClient {
             ParameterizedTypeReference<K> parameterizedTR,
             T body
     ) {
-        HttpEntity<T> requestEntity = new HttpEntity<>(body);
+        HttpEntity<T> requestEntity = new HttpEntity<>(body, defaultHeaders());
 
         ResponseEntity<K> response;
         try {
@@ -105,6 +106,13 @@ public abstract class BaseClient {
         }
 
         return responseBuilder.build();
+    }
+
+    private HttpHeaders defaultHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+        return headers;
     }
 
 }
