@@ -34,7 +34,7 @@ public class StatisticController {
     public List<EndpointHitsResultDto> getStats(
             @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
             @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
-            @RequestParam(required = false, defaultValue = "") List<String> uris,
+            @RequestParam(defaultValue = "") List<String> uris,
             @RequestParam(required = false) boolean unique
     ) {
         log.info("Запрос на получение статистики: start = {}, end = {}, uris = {}, unique = {}", start, end, uris, unique);
