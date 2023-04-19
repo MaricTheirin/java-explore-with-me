@@ -25,11 +25,15 @@ public class StatisticServiceImpl implements StatisticService {
     public List<EndpointHitsResultDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
         List<EndpointStats> stats;
         if (uris == null || uris.isEmpty()) {
-            stats = endpointHitRepository.findAllByTime(start, end);
-        } else if (!unique) {
-            stats = endpointHitRepository.findAllByTimeAndFilterByUri(start, end, uris);
-        } else {
+            if (unique) {
+                stats = endpointHitRepository.findAllByTimeAndUniqueIp(start, end);
+            } else {
+                stats = endpointHitRepository.findAllByTime(start, end);
+            }
+        } else if (unique) {
             stats = endpointHitRepository.findAllByTimeAndFilterByUriInAndUniqueIp(start, end, uris);
+        } else {
+            stats = endpointHitRepository.findAllByTimeAndFilterByUri(start, end, uris);
         }
         log.info("Получен список обращений: {}", stats);
         return stats.stream().map(EndpointHitDtoMapper::mapEndpointStatsToDto).collect(Collectors.toList());

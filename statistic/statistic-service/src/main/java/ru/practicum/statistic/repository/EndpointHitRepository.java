@@ -23,6 +23,18 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> 
     );
 
     @Query(value =
+            "SELECT new ru.practicum.statistic.model.EndpointStats(eh.app, eh.uri, count(distinct eh.ip)) " +
+            "FROM EndpointHit AS eh " +
+            "WHERE eh.timestamp BETWEEN :start AND :end " +
+            "GROUP BY eh.uri, eh.app " +
+            "ORDER BY 3 DESC"
+    )
+    List<EndpointStats> findAllByTimeAndUniqueIp(
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
+    @Query(value =
             "SELECT new ru.practicum.statistic.model.EndpointStats(eh.app, eh.uri, count(eh.app)) " +
             "FROM EndpointHit AS eh " +
             "WHERE eh.timestamp BETWEEN :start AND :end AND eh.uri IN :uri " +
