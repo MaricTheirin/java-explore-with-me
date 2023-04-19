@@ -37,7 +37,14 @@ public class StatisticController {
             @RequestParam(required = false) boolean unique
     ) {
         log.info("Запрос на получение статистики: start = {}, end = {}, uris = {}, unique = {}", start, end, uris, unique);
+        checkPeriod(start, end);
         return statisticService.getStats(start, end, uris, unique);
+    }
+
+    private void checkPeriod(LocalDateTime start, LocalDateTime end) {
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Дата начала не может быть позже даты окончания");
+        }
     }
 
 }
