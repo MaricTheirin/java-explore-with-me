@@ -21,7 +21,7 @@ public class EndpointHitDto {
     @NotBlank
     String uri;
 
-    @NotNull
+    @NotBlank
     String ip;
 
     @NotNull
