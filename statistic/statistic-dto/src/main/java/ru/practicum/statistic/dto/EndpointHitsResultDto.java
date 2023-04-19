@@ -1,9 +1,12 @@
 package ru.practicum.statistic.dto;
 
-import lombok.Value;
+import lombok.*;
 import javax.validation.constraints.NotBlank;
 
-@Value
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class EndpointHitsResultDto {
 
     @NotBlank
