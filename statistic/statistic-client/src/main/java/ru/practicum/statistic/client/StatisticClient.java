@@ -76,7 +76,7 @@ public class StatisticClient extends BaseClient {
         Map<String, Object> parameters = Map.of(
                 "start", start.format(DATE_TIME_FORMATTER),
                 "end", end.format(DATE_TIME_FORMATTER),
-                "uris", uris.size() == 0 ? "" : uris,
+                "uris", uris.size() == 0 ? "" : String.join(",", uris),
                 "unique", unique
         );
 
