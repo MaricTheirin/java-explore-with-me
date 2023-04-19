@@ -76,7 +76,7 @@ public abstract class BaseClient {
             String path,
             @Nullable Map<String, Object> parameters,
             ParameterizedTypeReference<K> parameterizedTR,
-            @Nullable T body
+            T body
     ) {
         HttpEntity<T> requestEntity = new HttpEntity<>(body);
 
