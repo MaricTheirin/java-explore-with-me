@@ -1,15 +1,37 @@
-version: '3.1'
+version: '3.8'
+
 services:
-  stats-server:
-    ports:
-      - "9090:9090"
 
   stats-db:
-    image: postgres:14-alpine
-
-  ewm-service:
+    image: postgres:14.7-alpine
+    volumes:
+      - /var/lib/postgresql/data/
+    container_name: StatisticServiceDB
     ports:
-      - "8080:8080"
+      - "6541:5432"
+    environment:
+      - POSTGRES_DB=statistic
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+
+  stats-server:
+    build: ./statistic/statistic-service
+    container_name: StatisticService
+    ports:
+      - "9090:9090"
+    depends_on:
+      - stats-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://StatisticServiceDB:5432/statistic
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      # - TZ=Europe/Moscow #For localhost only
 
   ewm-db:
-    image: postgres:14-alpine
+    image: postgres:14.7-alpine
+
+  ewm-service:
+    build: ./main
+    container_name: MainService
+    ports:
+      - "8080:8080"
