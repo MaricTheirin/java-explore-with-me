@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class DefaultExceptionHandler {
 
-    @ExceptionHandler(NotFoundException.class)
-    protected ResponseEntity<ExceptionMessage> handleNotFoundException(
-            NotFoundException exception,
+    @ExceptionHandler(EwmException.class)
+    protected ResponseEntity<ExceptionMessage> handleEwmException(
+            EwmException exception,
             HttpServletRequest request
     ) {
         logException(exception, request);
@@ -54,7 +54,7 @@ public class DefaultExceptionHandler {
                 .collect(Collectors.joining("; "));
         return new ResponseEntity<>(
                 new ExceptionMessage("Ошибка при проверке: " + errorMessage, request.getRequestURI()),
-                HttpStatus.BAD_REQUEST
+                HttpStatus.CONFLICT
         );
     }
 
