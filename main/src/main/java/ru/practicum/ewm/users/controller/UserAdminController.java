@@ -25,7 +25,7 @@ public class UserAdminController {
     public List<UserResponseDto> getUser(
             @RequestParam(defaultValue = "") List<Long> ids,
             @RequestParam(defaultValue = "0") int from,
-            @RequestParam(defaultValue = "5") int size
+            @RequestParam(defaultValue = "10") int size
     ) {
         log.info("Запрошен список пользователей. Отбор по id = {}, страница = {}, размер выдачи = {}", ids, from, size);
         return userService.getAll(ids, from, size);
