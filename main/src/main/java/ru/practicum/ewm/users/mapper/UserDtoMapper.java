@@ -3,15 +3,14 @@ package ru.practicum.ewm.users.mapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ru.practicum.ewm.service.mapper.Mapper;
 import ru.practicum.ewm.users.dto.UserDto;
 import ru.practicum.ewm.users.dto.UserResponseDto;
 import ru.practicum.ewm.users.model.User;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
-public class UserDtoMapper {
-
-    private static final String OBJECT_MAPPED_MESSAGE = "Выполнено преобразование объекта из {} в {}";
+public class UserDtoMapper extends Mapper {
 
     public static User mapDtoToUser (UserDto userDto) {
         User user = new User(
@@ -19,7 +18,7 @@ public class UserDtoMapper {
                 userDto.getName(),
                 userDto.getEmail()
         );
-        log.trace(OBJECT_MAPPED_MESSAGE, userDto, user);
+        log.trace(DEFAULT_MESSAGE, userDto, user);
         return user;
     }
 
@@ -29,7 +28,7 @@ public class UserDtoMapper {
                 user.getName(),
                 user.getEmail()
         );
-        log.trace(OBJECT_MAPPED_MESSAGE, user, userResponseDto);
+        log.trace(DEFAULT_MESSAGE, user, userResponseDto);
         return userResponseDto;
     }
 
