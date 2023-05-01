@@ -34,10 +34,12 @@ public interface EventService {
             boolean onlyAvailable,
             EventSort sort,
             int from,
-            int size
+            int size,
+            String ip,
+            String url
     );
 
-    EventResponseDto getEvent(long id);
+    EventResponseDto getEvent(long id, String ip, String url);
 
     List<EventShortResponseDto> getEvents(long userId, int from, int size);
 

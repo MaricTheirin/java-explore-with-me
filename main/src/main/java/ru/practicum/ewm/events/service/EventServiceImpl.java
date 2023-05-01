@@ -3,6 +3,7 @@ package ru.practicum.ewm.events.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.categories.exception.CategoryNotFoundException;
 import ru.practicum.ewm.categories.model.Category;
 import ru.practicum.ewm.categories.repository.CategoryRepository;
@@ -14,7 +15,8 @@ import ru.practicum.ewm.events.repository.*;
 import ru.practicum.ewm.users.exception.UserNotFoundException;
 import ru.practicum.ewm.users.model.User;
 import ru.practicum.ewm.users.repository.UserRepository;
-
+import ru.practicum.ewm.statistic.client.StatisticClient;
+import ru.practicum.statistic.dto.EndpointHitDto;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -35,8 +37,10 @@ public class EventServiceImpl implements EventService {
     private final EventLocationRepository eventLocationRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final StatisticClient statisticClient;
 
     @Override
+    @Transactional(readOnly = true)
     public List<EventResponseDto> adminGetEvents(
             Set<Long> userIds,
             EventState[] states,
@@ -53,6 +57,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventResponseDto adminUpdateEvent(long eventId, EventDto eventDto) {
         Event savedEvent = eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException(eventId));
         checkBeforeAdminUpdate(savedEvent, eventDto);
@@ -60,6 +65,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventResponseDto userUpdateEvent(long userId, long eventId, EventDto eventDto) {
         Event savedEvent = eventRepository
                 .findByInitiator_IdAndId(userId, eventId).orElseThrow(() -> new EventNotFoundException(eventId));
@@ -68,6 +74,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<EventResponseDto> getEvents(
             String text,
             Set<Long> categories,
@@ -77,8 +84,12 @@ public class EventServiceImpl implements EventService {
             boolean onlyAvailable,
             EventSort sort,
             int from,
-            int size
+            int size,
+            String ip,
+            String url
     ) {
+        createHitToStatisticService(ip, url);
+
         List<Event> foundEvents =
                 eventRepository.getEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
         log.debug("Получены события: {}", foundEvents);
@@ -86,13 +97,17 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventResponseDto getEvent(long id) {
+    @Transactional(readOnly = true)
+    public EventResponseDto getEvent(long id, String ip, String url) {
+        createHitToStatisticService(ip, url);
+
         Event requestedEvent = eventRepository.findById(id).orElseThrow(() -> new EventNotFoundException(id));
         log.debug("Получено событие: {}", requestedEvent);
         return mapEventToResponseDto(requestedEvent);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<EventShortResponseDto> getEvents(long userId, int from, int size) {
         List<Event> requestedEvents = eventRepository.findAllByInitiator_Id(userId);
         log.debug("Получены события: {}", requestedEvents);
@@ -100,6 +115,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public EventResponseDto getEvent(long userId, long eventId) {
         Event requestedEvent = eventRepository
                 .findByInitiator_IdAndId(userId, eventId).orElseThrow(() -> new EventNotFoundException(eventId));
@@ -108,6 +124,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventResponseDto createEvent(long userId, EventDto eventDto) {
         long categoryId = eventDto.getCategory();
         User initiator = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
@@ -147,7 +164,8 @@ public class EventServiceImpl implements EventService {
         }
 
         if (eventDto.getLocation() != null) {
-            EventLocation newLocation = mapDtoToEventLocation(eventDto.getLocation());
+            EventLocation newLocation =
+                    eventLocationRepository.saveAndFlush(mapDtoToEventLocation(eventDto.getLocation()));
             log.debug("Место события изменено с {} на {}", savedEvent.getLocation(), eventDto.getLocation());
             savedEvent.setLocation(newLocation);
         }
@@ -227,6 +245,22 @@ public class EventServiceImpl implements EventService {
         if (savedEvent.getState() != CANCELED && savedEvent.getState() != PENDING) {
             log.warn("Редактирование события в статусе {} невозможно", savedEvent.getState());
             throw new EventNotEditableException("Событие " + savedEvent.getId() + " нельзя редактировать");
+        }
+    }
+
+    private void createHitToStatisticService(String ip, String url) {
+        EndpointHitDto endpointHitDto = EndpointHitDto.builder()
+                .app("EWM-Main-Service")
+                .uri(url)
+                .ip(ip)
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        try {
+            statisticClient.saveHit(endpointHitDto);
+            log.debug("Информация о запросе отправлена на сервис статистики: {}", endpointHitDto);
+        } catch (Exception e) {
+            log.warn("Ошибка при отправке информации на сервис статистики: {}", e.getMessage());
         }
     }
 
