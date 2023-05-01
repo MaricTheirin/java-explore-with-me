@@ -7,7 +7,6 @@ import ru.practicum.ewm.events.dto.EventDto;
 import ru.practicum.ewm.events.dto.EventResponseDto;
 import ru.practicum.ewm.events.model.EventState;
 import ru.practicum.ewm.events.service.EventService;
-
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
@@ -25,10 +24,10 @@ public class EventAdminController {
     @GetMapping
     public List<EventResponseDto> adminGetEvents(
             @RequestParam(name = "users") Set<Long> userIds,
-            @RequestParam EventState[] states,
+            @RequestParam(required = false) EventState[] states,
             @RequestParam(name = "categories") Set<Long> categoryIds,
-            @RequestParam LocalDateTime rangeStart,
-            @RequestParam LocalDateTime rangeEnd,
+            @RequestParam(defaultValue = "#{T(java.time.LocalDateTime).now()}") LocalDateTime rangeStart,
+            @RequestParam(defaultValue = "#{T(java.time.LocalDateTime).now().plusYears(99L)}") LocalDateTime rangeEnd,
             @RequestParam(defaultValue = "0") @PositiveOrZero int from,
             @RequestParam(defaultValue = "10") @Positive int size
     ) {
