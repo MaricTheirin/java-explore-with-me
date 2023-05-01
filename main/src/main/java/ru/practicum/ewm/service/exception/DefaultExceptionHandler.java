@@ -1,12 +1,12 @@
 package ru.practicum.ewm.service.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -23,7 +23,7 @@ public class DefaultExceptionHandler {
     ) {
         logException(exception, request);
         return new ResponseEntity<>(
-                new ExceptionMessage(exception.getMessage(), request.getRequestURI()),
+                new ExceptionMessage(exception.getMessage(), request.getRequestURI(), exception.getStatus().name()),
                 exception.getStatus()
         );
     }
@@ -33,13 +33,14 @@ public class DefaultExceptionHandler {
             MethodArgumentNotValidException exception,
             HttpServletRequest request
     ) {
+        HttpStatus resultStatus = HttpStatus.BAD_REQUEST;
         logException(exception, request);
         String errorMessage = exception.getFieldErrors().stream()
                 .map(error -> "'" + error.getField() + "': " + error.getDefaultMessage())
                 .collect(Collectors.joining("; "));
         return new ResponseEntity<>(
-                new ExceptionMessage("Ошибка при проверке полей: " + errorMessage, request.getRequestURI()),
-                HttpStatus.BAD_REQUEST
+                new ExceptionMessage("Ошибка при проверке полей: " + errorMessage, request.getRequestURI(), resultStatus.name()),
+                resultStatus
         );
     }
 
@@ -48,13 +49,14 @@ public class DefaultExceptionHandler {
             ConstraintViolationException exception,
             HttpServletRequest request
     ) {
+        HttpStatus resultStatus = HttpStatus.CONFLICT;
         logException(exception, request);
         String errorMessage = exception.getConstraintViolations().stream()
                 .map(ConstraintViolation::getMessageTemplate)
                 .collect(Collectors.joining("; "));
         return new ResponseEntity<>(
-                new ExceptionMessage("Ошибка при проверке: " + errorMessage, request.getRequestURI()),
-                HttpStatus.CONFLICT
+                new ExceptionMessage("Ошибка при проверке: " + errorMessage, request.getRequestURI(), resultStatus.name()),
+                resultStatus
         );
     }
 
@@ -63,10 +65,24 @@ public class DefaultExceptionHandler {
             IllegalArgumentException exception,
             HttpServletRequest request
     ) {
+        HttpStatus resultStatus = HttpStatus.BAD_REQUEST;
         logException(exception, request);
         return new ResponseEntity<>(
-                new ExceptionMessage(exception.getMessage(), request.getRequestURI()),
-                HttpStatus.BAD_REQUEST
+                new ExceptionMessage(exception.getMessage(), request.getRequestURI(), resultStatus.name()),
+                resultStatus
+        );
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    protected ResponseEntity<ExceptionMessage> handleIllegalArgumentException(
+            DataIntegrityViolationException exception,
+            HttpServletRequest request
+    ) {
+        HttpStatus resultStatus = HttpStatus.BAD_REQUEST;
+        logException(exception, request);
+        return new ResponseEntity<>(
+                new ExceptionMessage(exception.getMostSpecificCause().getMessage(), request.getRequestURI(), resultStatus.name()),
+                resultStatus
         );
     }
 
@@ -77,6 +93,5 @@ public class DefaultExceptionHandler {
                 request.getRequestURI(),
                 throwable.getMessage());
     }
-
 
 }

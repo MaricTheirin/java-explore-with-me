@@ -1,30 +1,16 @@
 package ru.practicum.ewm.service.exception;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 
+@Getter
+@RequiredArgsConstructor
 public class ExceptionMessage {
 
     private final String error;
-    private final LocalDateTime localDateTime;
+    private final LocalDateTime localDateTime = LocalDateTime.now();
     private final String path;
-
-    public ExceptionMessage(String message, String path) {
-        this.error = message;
-        this.localDateTime = LocalDateTime.now();
-        this.path = path;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public LocalDateTime getLocalDateTime() {
-        return localDateTime;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
+    private final String status;
 
 }
