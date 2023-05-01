@@ -1,4 +1,4 @@
-package ru.practicum.statistic.client.exception;
+package ru.practicum.ewm.statistic.client.exception;
 
 import org.springframework.http.HttpStatus;
 

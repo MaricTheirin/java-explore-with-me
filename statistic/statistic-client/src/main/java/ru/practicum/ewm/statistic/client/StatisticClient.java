@@ -1,4 +1,4 @@
-package ru.practicum.statistic.client;
+package ru.practicum.ewm.statistic.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +7,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.statistic.dto.EndpointHitDto;
 import ru.practicum.statistic.dto.EndpointHitsResultDto;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Component
+@Service
 public class StatisticClient extends BaseClient {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

@@ -1,11 +1,12 @@
-package ru.practicum.statistic.client;
+package ru.practicum.ewm.statistic.client;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.lang.Nullable;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
-import ru.practicum.statistic.client.exception.ClientException;
+import ru.practicum.ewm.statistic.client.exception.ClientException;
+
 import java.util.List;
 import java.util.Map;
 
