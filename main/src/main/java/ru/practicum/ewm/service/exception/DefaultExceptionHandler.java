@@ -5,6 +5,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +41,19 @@ public class DefaultExceptionHandler {
                 .collect(Collectors.joining("; "));
         return new ResponseEntity<>(
                 new ExceptionMessage("Ошибка при проверке полей: " + errorMessage, request.getRequestURI(), resultStatus.name()),
+                resultStatus
+        );
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    protected ResponseEntity<ExceptionMessage> handleMissingServletRequestParameterException(
+            MissingServletRequestParameterException exception,
+            HttpServletRequest request
+    ) {
+        HttpStatus resultStatus = HttpStatus.BAD_REQUEST;
+        logException(exception, request);
+        return new ResponseEntity<>(
+                new ExceptionMessage("Заданы не все требуемые параметры: " + exception.getMessage(), request.getRequestURI(), resultStatus.name()),
                 resultStatus
         );
     }
