@@ -46,7 +46,7 @@ CREATE TABLE public.events
     request_moderation BOOLEAN                                 NOT NULL,
     state              INTEGER                                 NOT NULL,
     views              BIGINT                                  NOT NULL,
-    confirmed_requests BIGINT                                  NOT NULL,
+    confirmed_requests INTEGER                                 NOT NULL,
     CONSTRAINT pk_events PRIMARY KEY (id),
     FOREIGN KEY (category_id) REFERENCES public.categories(id)      ON DELETE CASCADE,
     FOREIGN KEY (location_id) REFERENCES public.event_locations(id) ON DELETE CASCADE,
