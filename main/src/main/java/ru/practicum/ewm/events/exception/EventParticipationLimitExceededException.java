@@ -7,8 +7,8 @@ public class EventParticipationLimitExceededException extends EwmException {
 
     private final HttpStatus status = HttpStatus.CONFLICT;
 
-    public EventParticipationLimitExceededException(String message) {
-        super(message);
+    public EventParticipationLimitExceededException(long eventId) {
+        super("В событии с id = " + eventId + " нет свободных мест");
     }
 
 }
