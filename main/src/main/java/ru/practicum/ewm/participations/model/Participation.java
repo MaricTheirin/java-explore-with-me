@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "participations", schema = "public")
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
 @Setter
 @ToString
