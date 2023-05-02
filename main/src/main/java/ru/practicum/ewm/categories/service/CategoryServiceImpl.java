@@ -38,19 +38,22 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public void delete(long catId) {
-        checkIfExist(catId);
+        Category category = categoryRepository
+                .findById(catId)
+                .orElseThrow(() -> new CategoryNotFoundException(catId));
         if (eventRepository.existsByCategoryId(catId)) {
             throw new CategoryNotEmptyException(catId);
         }
-        categoryRepository.deleteById(catId);
+        categoryRepository.delete(category);
         log.debug("Категория с id = {} удалена", catId);
     }
 
     @Transactional
     @Override
     public CategoryResponseDto update(long catId, CategoryDto categoryDto) {
-        checkIfExist(catId);
-        Category storedCategory = categoryRepository.getReferenceById(catId);
+        Category storedCategory = categoryRepository
+                .findById(catId)
+                .orElseThrow(() -> new CategoryNotFoundException(catId));
         if (!storedCategory.getName().equals(categoryDto.getName())) {
             log.debug("Наименование категории {} изменено на {}", storedCategory.getName(), categoryDto.getName());
             storedCategory.setName(categoryDto.getName());
@@ -69,17 +72,11 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(readOnly = true)
     @Override
     public CategoryResponseDto get(long catId) {
-        checkIfExist(catId);
-        Category requestedCategory = categoryRepository.getReferenceById(catId);
+        Category requestedCategory = categoryRepository
+                .findById(catId)
+                .orElseThrow(() -> new CategoryNotFoundException(catId));
         log.debug("Получена категория {}", requestedCategory);
         return mapCategoryToResponseDto(requestedCategory);
-    }
-
-    private void checkIfExist(long catId) {
-        if (!categoryRepository.existsById(catId)) {
-            log.debug("Категория с id = {} не обнаружена", catId);
-            throw new CategoryNotFoundException(catId);
-        }
     }
 
 }
