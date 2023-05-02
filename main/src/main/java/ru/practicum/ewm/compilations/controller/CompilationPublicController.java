@@ -19,7 +19,7 @@ public class CompilationPublicController {
     @GetMapping
     public List<CompilationResponseDto> getCompilations(
             @RequestParam(required = false) Boolean pinned,
-            @RequestParam(required = false) int from,
+            @RequestParam(defaultValue = "0") int from,
             @RequestParam(defaultValue = "10") int size
     ) {
         log.info("Запрошен список подборок событий с параметрами pinned = {}, from = {}, size = {}", pinned, from, size);
