@@ -26,6 +26,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public UserResponseDto create(UserDto userDto) {
         User savedUser = userRepository.saveAndFlush(mapDtoToUser(userDto));
         log.debug("Пользователь {} сохранён", savedUser);
