@@ -2,6 +2,7 @@ package ru.practicum.ewm.events.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.categories.exception.CategoryNotFoundException;
@@ -109,7 +110,7 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional(readOnly = true)
     public List<EventShortResponseDto> getEvents(long userId, int from, int size) {
-        List<Event> requestedEvents = eventRepository.findAllByInitiator_Id(userId);
+        List<Event> requestedEvents = eventRepository.findAllByInitiator_Id(userId, PageRequest.of(from, size));
         log.debug("Получены события: {}", requestedEvents);
         return requestedEvents.stream().map(EventDtoMapper::mapEventToShortResponseDto).collect(Collectors.toList());
     }
