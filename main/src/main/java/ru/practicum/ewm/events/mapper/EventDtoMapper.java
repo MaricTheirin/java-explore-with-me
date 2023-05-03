@@ -33,7 +33,7 @@ public class EventDtoMapper extends Mapper {
                 .initiator(initiator)
                 .paid(eventDto.getPaid())
                 .participantLimit(eventDto.getParticipantLimit())
-                .requestModeration(eventDto.isRequestModeration())
+                .requestModeration(eventDto.getRequestModeration())
                 .state(EventState.PENDING)
                 .build();
 

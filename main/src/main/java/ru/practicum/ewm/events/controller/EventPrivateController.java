@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.events.dto.EventDto;
 import ru.practicum.ewm.events.dto.EventResponseDto;
 import ru.practicum.ewm.events.dto.EventShortResponseDto;
+import ru.practicum.ewm.events.exception.EventValidationException;
 import ru.practicum.ewm.events.service.EventService;
 import ru.practicum.ewm.service.validation.Create;
 import ru.practicum.ewm.service.validation.Update;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -50,6 +52,7 @@ public class EventPrivateController {
             @RequestBody @Validated(value = Create.class) EventDto eventDto
     ) {
         log.info("Пользователь с id = {} запросил создание события {}", userId, eventDto);
+        checkEventDate(eventDto.getEventDate());
         return eventService.createEvent(userId, eventDto);
     }
 
@@ -61,7 +64,16 @@ public class EventPrivateController {
             @RequestBody @Validated (value = Update.class) EventDto eventDto
     ) {
         log.info("Пользователь с id = {} запросил обновление события с id = {} на {}", userId, eventId, eventDto);
+        checkEventDate(eventDto.getEventDate());
         return eventService.userUpdateEvent(userId, eventId, eventDto);
+    }
+
+    private void checkEventDate(LocalDateTime eventDate) {
+        //Изначально было реализовано через @Future, но тесты не проходили, т.к. ошибка LocalDateTime
+        // должна выдавать 409, а прочие ValidationException - 400.
+        if (eventDate != null && LocalDateTime.now().plusHours(2).isAfter(eventDate)) {
+            throw new EventValidationException("Дата события задана некорректно");
+        }
     }
 
 }

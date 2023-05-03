@@ -8,7 +8,6 @@ import lombok.ToString;
 import lombok.extern.jackson.Jacksonized;
 import ru.practicum.ewm.events.model.EventStateAction;
 import ru.practicum.ewm.service.validation.Create;
-import ru.practicum.ewm.service.validation.Update;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
@@ -30,7 +29,6 @@ public class EventDto {
     @NotBlank(groups = Create.class)
     String description;
 
-    @Future(groups = {Create.class, Update.class})
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime eventDate;
 

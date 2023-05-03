@@ -9,7 +9,6 @@ import ru.practicum.ewm.events.model.Event;
 import ru.practicum.ewm.events.model.EventSort;
 import ru.practicum.ewm.events.model.EventState;
 import ru.practicum.ewm.events.model.QEvent;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
@@ -98,7 +97,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
 
         BooleanExpression filters = event.eventDate.between(rangeStart, rangeEnd);
 
-        if (!text.isBlank()) {
+        if (text != null && !text.isBlank()) {
             filters.and(event.description.likeIgnoreCase(text).or(event.annotation.likeIgnoreCase(text)));
         }
 
@@ -106,7 +105,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
             filters.and(event.initiator.id.in(userIds));
         }
 
-        if (categoryIds.size() > 0) {
+        if (categoryIds != null && categoryIds.size() > 0) {
             filters.and(event.category.id.in(categoryIds));
         }
 

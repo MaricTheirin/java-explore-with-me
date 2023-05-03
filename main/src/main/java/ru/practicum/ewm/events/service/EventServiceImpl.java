@@ -146,7 +146,7 @@ public class EventServiceImpl implements EventService {
             savedEvent.setAnnotation(eventDto.getAnnotation());
         }
 
-        if (eventDto.getCategory() != 0) {
+        if (eventDto.getCategory() != null) {
             Category newCategory = categoryRepository
                     .findById(eventDto.getCategory())
                     .orElseThrow(() -> new CategoryNotFoundException(eventDto.getCategory()));
@@ -185,13 +185,13 @@ public class EventServiceImpl implements EventService {
             savedEvent.setParticipantLimit(eventDto.getParticipantLimit());
         }
 
-        if (eventDto.isRequestModeration() != savedEvent.isRequestModeration()) {
+        if (eventDto.getRequestModeration() != null && eventDto.getRequestModeration() != savedEvent.isRequestModeration()) {
             log.debug(
                     "Требование модерации изменено с {} на {}",
                     savedEvent.isRequestModeration(),
-                    eventDto.isRequestModeration()
+                    eventDto.getRequestModeration()
             );
-            savedEvent.setRequestModeration(eventDto.isRequestModeration());
+            savedEvent.setRequestModeration(eventDto.getRequestModeration());
         }
 
         if (eventDto.getTitle() != null && !eventDto.getTitle().isBlank() && !eventDto.getTitle().equals(savedEvent.getTitle())) {
@@ -208,7 +208,6 @@ public class EventServiceImpl implements EventService {
                 case PUBLISH_EVENT:
                     savedEvent.setState(PUBLISHED);
                     savedEvent.setPublishedOn(LocalDateTime.now());
-                    savedEvent.setRequestModeration(true);
                     break;
                 case SEND_TO_REVIEW:
                     savedEvent.setState(PENDING);
