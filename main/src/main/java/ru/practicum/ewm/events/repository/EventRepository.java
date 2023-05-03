@@ -14,6 +14,8 @@ public interface EventRepository extends
 
     boolean existsByCategoryId(long categoryId);
 
+    boolean existsByInitiator_IdAndId(long userId, long eventId);
+
     List<Event> findAllByInitiator_Id(long userId, Pageable pageable);
 
     Optional<Event> findByInitiator_IdAndId(long userId, long eventId);
