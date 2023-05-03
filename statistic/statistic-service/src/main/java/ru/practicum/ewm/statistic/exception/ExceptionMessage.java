@@ -1,4 +1,4 @@
-package ru.practicum.statistic.exception;
+package ru.practicum.ewm.statistic.exception;
 
 import java.time.LocalDateTime;
 

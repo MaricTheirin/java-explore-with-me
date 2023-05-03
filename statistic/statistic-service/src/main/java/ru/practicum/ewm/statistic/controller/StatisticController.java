@@ -1,11 +1,12 @@
-package ru.practicum.statistic.controller;
+package ru.practicum.ewm.statistic.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.statistic.dto.EndpointHitDto;
-import ru.practicum.statistic.dto.EndpointHitsResultDto;
-import ru.practicum.statistic.service.StatisticService;
+import ru.practicum.ewm.statistic.dto.EndpointHitDto;
+import ru.practicum.ewm.statistic.dto.EndpointHitsResultDto;
+import ru.practicum.ewm.statistic.service.StatisticService;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,8 +19,8 @@ public class StatisticController {
 
     private final StatisticService statisticService;
 
-    @PostMapping(path = "/hit")
-    @ResponseStatus(code = HttpStatus.CREATED)
+    @PostMapping("/hit")
+    @ResponseStatus(HttpStatus.CREATED)
     public void saveHit(
             @Valid @RequestBody EndpointHitDto hitDto
     ) {
@@ -27,7 +28,7 @@ public class StatisticController {
         statisticService.saveHit(hitDto);
     }
 
-    @GetMapping(path = "/stats")
+    @GetMapping("/stats")
     public List<EndpointHitsResultDto> getStats(
             @RequestParam("start") LocalDateTime start,
             @RequestParam("end") LocalDateTime end,

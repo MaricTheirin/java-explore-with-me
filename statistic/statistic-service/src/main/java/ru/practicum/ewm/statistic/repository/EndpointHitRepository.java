@@ -1,17 +1,17 @@
-package ru.practicum.statistic.repository;
+package ru.practicum.ewm.statistic.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ru.practicum.statistic.model.EndpointHit;
-import ru.practicum.statistic.model.EndpointStats;
+import ru.practicum.ewm.statistic.model.EndpointHit;
+import ru.practicum.ewm.statistic.model.EndpointStats;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> {
 
     @Query(value =
-            "SELECT new ru.practicum.statistic.model.EndpointStats(eh.app, eh.uri, count(eh.app)) " +
+            "SELECT new ru.practicum.ewm.statistic.model.EndpointStats(eh.app, eh.uri, count(eh.app)) " +
             "FROM EndpointHit AS eh " +
             "WHERE eh.timestamp BETWEEN :start AND :end " +
             "GROUP BY eh.uri, eh.app " +
@@ -23,7 +23,7 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> 
     );
 
     @Query(value =
-            "SELECT new ru.practicum.statistic.model.EndpointStats(eh.app, eh.uri, count(distinct eh.ip)) " +
+            "SELECT new ru.practicum.ewm.statistic.model.EndpointStats(eh.app, eh.uri, count(distinct eh.ip)) " +
             "FROM EndpointHit AS eh " +
             "WHERE eh.timestamp BETWEEN :start AND :end " +
             "GROUP BY eh.uri, eh.app " +
@@ -35,7 +35,7 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> 
     );
 
     @Query(value =
-            "SELECT new ru.practicum.statistic.model.EndpointStats(eh.app, eh.uri, count(eh.app)) " +
+            "SELECT new ru.practicum.ewm.statistic.model.EndpointStats(eh.app, eh.uri, count(eh.app)) " +
             "FROM EndpointHit AS eh " +
             "WHERE eh.timestamp BETWEEN :start AND :end AND eh.uri IN :uri " +
             "GROUP BY eh.uri, eh.app " +
@@ -48,7 +48,7 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> 
     );
 
     @Query(value =
-            "SELECT new ru.practicum.statistic.model.EndpointStats(eh.app, eh.uri, count(distinct eh.ip)) " +
+            "SELECT new ru.practicum.ewm.statistic.model.EndpointStats(eh.app, eh.uri, count(distinct eh.ip)) " +
             "FROM EndpointHit AS eh " +
             "WHERE eh.timestamp BETWEEN :start AND :end AND eh.uri IN (:uri)" +
             "GROUP BY eh.uri, eh.app " +

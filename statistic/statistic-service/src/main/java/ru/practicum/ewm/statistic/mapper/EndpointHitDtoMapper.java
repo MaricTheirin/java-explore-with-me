@@ -1,12 +1,12 @@
-package ru.practicum.statistic.mapper;
+package ru.practicum.ewm.statistic.mapper;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.practicum.statistic.dto.EndpointHitDto;
-import ru.practicum.statistic.dto.EndpointHitsResultDto;
-import ru.practicum.statistic.model.EndpointHit;
-import ru.practicum.statistic.model.EndpointStats;
+import ru.practicum.ewm.statistic.dto.EndpointHitDto;
+import ru.practicum.ewm.statistic.dto.EndpointHitsResultDto;
+import ru.practicum.ewm.statistic.model.EndpointHit;
+import ru.practicum.ewm.statistic.model.EndpointStats;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

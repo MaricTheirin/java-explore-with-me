@@ -1,4 +1,4 @@
-package ru.practicum.statistic.dto;
+package ru.practicum.ewm.statistic.dto;
 
 import lombok.*;
 

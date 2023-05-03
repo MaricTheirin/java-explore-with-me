@@ -17,7 +17,7 @@ import ru.practicum.ewm.users.exception.UserNotFoundException;
 import ru.practicum.ewm.users.model.User;
 import ru.practicum.ewm.users.repository.UserRepository;
 import ru.practicum.ewm.statistic.client.StatisticClient;
-import ru.practicum.statistic.dto.EndpointHitDto;
+import ru.practicum.ewm.statistic.dto.EndpointHitDto;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
