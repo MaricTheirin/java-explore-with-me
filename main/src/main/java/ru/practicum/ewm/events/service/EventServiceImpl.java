@@ -171,9 +171,9 @@ public class EventServiceImpl implements EventService {
             savedEvent.setLocation(newLocation);
         }
 
-        if (eventDto.isPaid() != savedEvent.isPaid()) {
-            log.debug("Требование оплаты изменено с {} на {}", savedEvent.isPaid(), eventDto.isPaid());
-            savedEvent.setPaid(eventDto.isPaid());
+        if (eventDto.getPaid() != null && eventDto.getPaid() != savedEvent.isPaid()) {
+            log.debug("Требование оплаты изменено с {} на {}", savedEvent.isPaid(), eventDto.getPaid());
+            savedEvent.setPaid(eventDto.getPaid());
         }
 
         if (eventDto.getParticipantLimit() != null && eventDto.getParticipantLimit() != savedEvent.getParticipantLimit()) {

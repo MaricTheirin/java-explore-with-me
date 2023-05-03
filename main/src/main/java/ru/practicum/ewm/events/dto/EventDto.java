@@ -36,7 +36,8 @@ public class EventDto {
     @NotNull(groups = Create.class)
     EventLocationDto location;
 
-    boolean paid;
+    @NotNull(groups = Create.class)
+    Boolean paid;
 
     @PositiveOrZero
     Integer participantLimit;
