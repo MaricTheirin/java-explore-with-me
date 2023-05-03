@@ -24,12 +24,13 @@ public class EventDto {
     @NotBlank(groups = Create.class)
     String annotation;
 
-    long category;
+    @Positive(groups = Create.class)
+    Long category;
 
     @NotBlank(groups = Create.class)
     String description;
 
-    @Future(groups = Create.class)
+    @Future(groups = {Create.class, Update.class})
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime eventDate;
 
@@ -42,12 +43,12 @@ public class EventDto {
     @PositiveOrZero
     Integer participantLimit;
 
-    boolean requestModeration;
+    Boolean requestModeration;
 
     @NotBlank(groups = Create.class)
     String title;
 
-    @Null(groups = {Create.class, Update.class})
+    @Null(groups = Create.class)
     EventStateAction stateAction;
 
     @ToString.Include(name = "annotation")
