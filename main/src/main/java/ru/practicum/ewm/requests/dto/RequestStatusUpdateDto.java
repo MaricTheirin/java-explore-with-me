@@ -1,9 +1,10 @@
-package ru.practicum.ewm.participations.dto;
+package ru.practicum.ewm.requests.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import ru.practicum.ewm.participations.model.ParticipationState;
+import ru.practicum.ewm.requests.model.RequestState;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
@@ -11,12 +12,12 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @ToString
-public class ParticipationsStatusUpdateDto {
+public class RequestStatusUpdateDto {
 
     @NotEmpty
     Set<Long> requestIds;
 
     @NotNull
-    ParticipationState status;
+    RequestState status;
 
 }

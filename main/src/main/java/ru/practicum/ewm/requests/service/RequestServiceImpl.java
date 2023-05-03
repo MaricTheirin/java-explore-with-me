@@ -1,4 +1,4 @@
-package ru.practicum.ewm.participations.service;
+package ru.practicum.ewm.requests.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,57 +11,57 @@ import ru.practicum.ewm.events.exception.EventParticipationLimitExceededExceptio
 import ru.practicum.ewm.events.model.Event;
 import ru.practicum.ewm.events.model.EventState;
 import ru.practicum.ewm.events.repository.EventRepository;
-import ru.practicum.ewm.participations.dto.ParticipationResponseDto;
-import ru.practicum.ewm.participations.dto.ParticipationsStatusUpdateDto;
-import ru.practicum.ewm.participations.dto.ParticipationsStatusUpdateResponseDto;
-import ru.practicum.ewm.participations.exception.ParticipationNotFoundException;
-import ru.practicum.ewm.participations.mapper.ParticipationDtoMapper;
-import ru.practicum.ewm.participations.model.Participation;
-import ru.practicum.ewm.participations.model.ParticipationState;
-import ru.practicum.ewm.participations.repository.ParticipationRepository;
+import ru.practicum.ewm.requests.dto.RequestResponseDto;
+import ru.practicum.ewm.requests.dto.RequestStatusUpdateDto;
+import ru.practicum.ewm.requests.dto.RequestStatusUpdateResponseDto;
+import ru.practicum.ewm.requests.exception.RequestNotFoundException;
+import ru.practicum.ewm.requests.mapper.RequestDtoMapper;
+import ru.practicum.ewm.requests.model.Request;
+import ru.practicum.ewm.requests.model.RequestState;
+import ru.practicum.ewm.requests.repository.RequestRepository;
 import ru.practicum.ewm.users.exception.UserNotFoundException;
 import ru.practicum.ewm.users.model.User;
 import ru.practicum.ewm.users.repository.UserRepository;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static ru.practicum.ewm.participations.mapper.ParticipationDtoMapper.mapParticipationToResponseDto;
-import static ru.practicum.ewm.participations.model.ParticipationState.*;
+import static ru.practicum.ewm.requests.mapper.RequestDtoMapper.mapRequestToResponseDto;
+import static ru.practicum.ewm.requests.model.RequestState.*;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class ParticipationServiceImpl implements ParticipationService {
+public class RequestServiceImpl implements RequestService {
 
-    private final ParticipationRepository participationRepository;
+    private final RequestRepository requestRepository;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
 
     @Override
     @Transactional(readOnly = true)
-    public List<ParticipationResponseDto> getUserParticipationRequests(long userId) {
-        List<Participation> requestedParticipations = participationRepository.getParticipationsByRequester_Id(userId);
-        log.debug("Получен список событий: {}", requestedParticipations);
-        return requestedParticipations
+    public List<RequestResponseDto> getUserParticipationRequests(long userId) {
+        List<Request> requests = requestRepository.getRequestsByRequester_Id(userId);
+        log.debug("Получен список событий: {}", requests);
+        return requests
                 .stream()
-                .map(ParticipationDtoMapper::mapParticipationToResponseDto)
+                .map(RequestDtoMapper::mapRequestToResponseDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public ParticipationResponseDto createParticipationRequest(long userId, long eventId) {
+    public RequestResponseDto createRequest(long userId, long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException(eventId));
         User requester = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         checkBeforeCreate(userId, event);
-        Participation newParticipation = participationRepository.saveAndFlush(
-                    Participation.builder()
+        Request newRequest = requestRepository.saveAndFlush(
+                    Request.builder()
                     .requester(requester)
                     .event(event)
                     .status(event.isRequestModeration() ? PENDING : CONFIRMED)
                     .build()
         );
-        if (newParticipation.getStatus() == CONFIRMED) {
+        if (newRequest.getStatus() == CONFIRMED) {
             int updatedConfirmedRequestsCount = event.getConfirmedRequests() + 1;
             log.debug("Количество участников события увеличено с {} до {}",
                     event.getConfirmedRequests(),
@@ -69,44 +69,44 @@ public class ParticipationServiceImpl implements ParticipationService {
             );
             event.setConfirmedRequests(event.getConfirmedRequests() + 1);
         }
-        log.debug("Создан запрос на участие {}", newParticipation);
-        return mapParticipationToResponseDto(newParticipation);
+        log.debug("Создан запрос на участие {}", newRequest);
+        return mapRequestToResponseDto(newRequest);
     }
 
     @Override
     @Transactional
-    public ParticipationResponseDto cancelParticipationRequest(long userId, long requestId) {
-        Participation savedParticipation = participationRepository
-                .getParticipationByIdAndRequester_Id(requestId, userId)
-                .orElseThrow(() -> new ParticipationNotFoundException(requestId));
-        if (savedParticipation.getStatus() == PENDING) {
+    public RequestResponseDto cancelRequest(long userId, long requestId) {
+        Request savedRequest = requestRepository
+                .getRequestByIdAndRequester_Id(requestId, userId)
+                .orElseThrow(() -> new RequestNotFoundException(requestId));
+        if (savedRequest.getStatus() == PENDING) {
             log.debug("Запрос на участие с id = {} отменён", requestId);
-            savedParticipation.setStatus(CANCELED);
+            savedRequest.setStatus(CANCELED);
         }
-        return mapParticipationToResponseDto(savedParticipation);
+        return mapRequestToResponseDto(savedRequest);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<ParticipationResponseDto> getEventParticipationRequests(long userId, long eventId) {
+    public List<RequestResponseDto> getEventRequests(long userId, long eventId) {
         if (!eventRepository.existsByInitiator_IdAndId(userId, eventId)) {
             return Collections.emptyList();
         }
 
-        List<Participation> eventParticipations = participationRepository.getParticipationsByEvent_Id(eventId);
-        log.debug("Получен список запросов на участие: {}", eventParticipations);
-        return eventParticipations
+        List<Request> eventRequests = requestRepository.getRequestsByEvent_Id(eventId);
+        log.debug("Получен список запросов на участие: {}", eventRequests);
+        return eventRequests
                 .stream()
-                .map(ParticipationDtoMapper::mapParticipationToResponseDto)
+                .map(RequestDtoMapper::mapRequestToResponseDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public ParticipationsStatusUpdateResponseDto updateEventParticipationRequestStatus(
+    public RequestStatusUpdateResponseDto updateEventRequestStatus(
             long userId,
             long eventId,
-            ParticipationsStatusUpdateDto statusUpdateDto
+            RequestStatusUpdateDto statusUpdateDto
     ) {
         Event event = eventRepository
                 .findByInitiator_IdAndId(userId, eventId)
@@ -124,9 +124,9 @@ public class ParticipationServiceImpl implements ParticipationService {
             throw new EventNotEditableException("Нельзя установить статус " + statusUpdateDto.getStatus());
         }
 
-        Set<Long> pendingIds = participationRepository
+        Set<Long> pendingIds = requestRepository
                 .findByIdInAndStatus(statusUpdateDto.getRequestIds(), PENDING).stream()
-                .map(Participation::getId)
+                .map(Request::getId)
                 .collect(Collectors.toSet());
 
         if (event.getConfirmedRequests() + pendingIds.size() > event.getParticipantLimit()) {
@@ -135,29 +135,29 @@ public class ParticipationServiceImpl implements ParticipationService {
 
         updateParticipationsState(event, pendingIds, statusUpdateDto.getStatus());
 
-        ParticipationsStatusUpdateResponseDto participationStats = new ParticipationsStatusUpdateResponseDto();
+        RequestStatusUpdateResponseDto requestStatus = new RequestStatusUpdateResponseDto();
 
-        participationRepository
+        requestRepository
                 .findByEvent_IdAndStatusIn(eventId, Arrays.asList(CONFIRMED, CANCELED, REJECTED))
                 .stream()
-                .map(ParticipationDtoMapper::mapParticipationToResponseDto)
+                .map(RequestDtoMapper::mapRequestToResponseDto)
                 .forEach(responseDto -> {
                     if (pendingIds.contains(responseDto.getId())) {
                         responseDto.setStatus(statusUpdateDto.getStatus());
                     }
                     if (statusUpdateDto.getStatus() == CONFIRMED) {
-                        participationStats.getConfirmedRequests().add(responseDto);
+                        requestStatus.getConfirmedRequests().add(responseDto);
                     } else {
-                        participationStats.getRejectedRequests().add(responseDto);
+                        requestStatus.getRejectedRequests().add(responseDto);
                     }
                 });
 
-        return participationStats;
+        return requestStatus;
     }
 
-    private void updateParticipationsState(Event event, Set<Long> participationIds, ParticipationState newState) {
+    private void updateParticipationsState(Event event, Set<Long> participationIds, RequestState newState) {
         int previousRequestsCount = event.getConfirmedRequests();
-        participationRepository.updateStatusByIdIn(newState, participationIds);
+        requestRepository.updateStatusByIdIn(newState, participationIds);
         event.setConfirmedRequests(
                 event.getConfirmedRequests() + (newState == CONFIRMED ? 1 : -1) * participationIds.size()
         );
@@ -173,7 +173,7 @@ public class ParticipationServiceImpl implements ParticipationService {
 
     private void checkBeforeCreate(long userId, Event event) {
 
-        if (participationRepository.existsByRequester_IdAndEvent_Id(userId, event.getId())) {
+        if (requestRepository.existsByRequester_IdAndEvent_Id(userId, event.getId())) {
             log.warn(
                     "Пользователь с id = {} пытается добавить повторный запрос на участие в событии с id = {}",
                     userId,

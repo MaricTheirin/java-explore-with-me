@@ -1,9 +1,10 @@
-package ru.practicum.ewm.participations.dto;
+package ru.practicum.ewm.requests.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.extern.jackson.Jacksonized;
-import ru.practicum.ewm.participations.model.ParticipationState;
+import ru.practicum.ewm.requests.model.RequestState;
+
 import java.time.LocalDateTime;
 
 @Getter
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Jacksonized
-public class ParticipationResponseDto {
+public class RequestResponseDto {
 
     long id;
 
@@ -23,6 +24,6 @@ public class ParticipationResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime created;
 
-    ParticipationState status;
+    RequestState status;
 
 }

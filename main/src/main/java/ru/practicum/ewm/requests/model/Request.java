@@ -1,4 +1,4 @@
-package ru.practicum.ewm.participations.model;
+package ru.practicum.ewm.requests.model;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,14 +8,14 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "participations", schema = "public")
+@Table(name = "requests", schema = "public")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
 @Setter
 @ToString
-public class Participation {
+public class Request {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +35,6 @@ public class Participation {
     @JoinColumn(name = "user_id", nullable = false)
     private User requester;
 
-    private ParticipationState status;
+    private RequestState status;
 
 }
