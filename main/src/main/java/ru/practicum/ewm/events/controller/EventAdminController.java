@@ -8,6 +8,7 @@ import ru.practicum.ewm.events.dto.EventDto;
 import ru.practicum.ewm.events.dto.EventResponseDto;
 import ru.practicum.ewm.events.model.EventState;
 import ru.practicum.ewm.events.service.EventService;
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
@@ -42,7 +43,7 @@ public class EventAdminController {
     @PatchMapping("/{eventId}")
     public EventResponseDto adminUpdateEvent(
             @PathVariable @Positive long eventId,
-            @RequestBody EventDto eventDto
+            @RequestBody @Valid EventDto eventDto
     ) {
         log.info("Запрошено обновление события с id = {} на {}", eventId, eventDto);
         return eventService.adminUpdateEvent(eventId, eventDto);

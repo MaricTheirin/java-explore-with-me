@@ -30,7 +30,7 @@ public class EventPrivateController {
     public List<EventShortResponseDto> getEvents(
             @PathVariable @Positive long userId,
             @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-            @RequestParam(defaultValue = "10") @PositiveOrZero int size
+            @RequestParam(defaultValue = "10") @Positive int size
     ) {
         log.info("Запрошен список событий пользователя с id = {} с параметрами: from={}; size={}", userId, from, size);
         return eventService.getEvents(userId, from, size);
