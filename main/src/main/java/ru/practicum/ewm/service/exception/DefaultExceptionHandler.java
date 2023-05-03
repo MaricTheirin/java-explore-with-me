@@ -88,11 +88,16 @@ public class DefaultExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    protected ResponseEntity<ExceptionMessage> handleIllegalArgumentException(
+    protected ResponseEntity<ExceptionMessage> handleDataIntegrityViolationException(
             DataIntegrityViolationException exception,
             HttpServletRequest request
     ) {
         HttpStatus resultStatus = HttpStatus.BAD_REQUEST;
+        if (exception.getRootCause() != null) {
+            if (exception.getRootCause().getMessage().contains("уникальности")) {
+                resultStatus = HttpStatus.CONFLICT;
+            }
+        }
         logException(exception, request);
         return new ResponseEntity<>(
                 new ExceptionMessage(exception.getMostSpecificCause().getMessage(), request.getRequestURI(), resultStatus.name()),
