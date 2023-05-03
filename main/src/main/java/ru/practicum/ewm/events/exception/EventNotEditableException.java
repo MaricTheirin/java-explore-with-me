@@ -5,9 +5,7 @@ import ru.practicum.ewm.service.exception.EwmException;
 
 public class EventNotEditableException extends EwmException {
 
-    private final HttpStatus status = HttpStatus.CONFLICT;
-
     public EventNotEditableException(String message) {
-        super(message);
+        super(message, HttpStatus.CONFLICT);
     }
 }

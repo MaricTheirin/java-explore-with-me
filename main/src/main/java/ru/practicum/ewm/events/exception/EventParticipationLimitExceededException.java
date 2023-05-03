@@ -5,10 +5,8 @@ import ru.practicum.ewm.service.exception.EwmException;
 
 public class EventParticipationLimitExceededException extends EwmException {
 
-    private final HttpStatus status = HttpStatus.CONFLICT;
-
     public EventParticipationLimitExceededException(long eventId) {
-        super("В событии с id = " + eventId + " нет свободных мест");
+        super("В событии с id = " + eventId + " нет свободных мест", HttpStatus.CONFLICT);
     }
 
 }

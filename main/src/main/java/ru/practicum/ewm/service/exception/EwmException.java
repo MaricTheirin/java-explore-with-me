@@ -4,10 +4,15 @@ import org.springframework.http.HttpStatus;
 
 public abstract class EwmException extends RuntimeException {
 
-    private final HttpStatus status = HttpStatus.BAD_REQUEST;
+    private HttpStatus status = HttpStatus.BAD_REQUEST;
 
     public EwmException(String message) {
         super(message);
+    }
+
+    public EwmException(String message, HttpStatus status) {
+        super(message);
+        this.status = status;
     }
 
     public HttpStatus getStatus() {
