@@ -2,6 +2,7 @@ package ru.practicum.ewm.events.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.events.dto.EventDto;
 import ru.practicum.ewm.events.dto.EventResponseDto;
@@ -16,6 +17,7 @@ import java.util.Set;
 @RestController
 @RequestMapping("/admin/events")
 @Slf4j
+@Validated
 @RequiredArgsConstructor
 public class EventAdminController {
 
@@ -39,7 +41,7 @@ public class EventAdminController {
 
     @PatchMapping("/{eventId}")
     public EventResponseDto adminUpdateEvent(
-            @PathVariable long eventId,
+            @PathVariable @Positive long eventId,
             @RequestBody EventDto eventDto
     ) {
         log.info("Запрошено обновление события с id = {} на {}", eventId, eventDto);
