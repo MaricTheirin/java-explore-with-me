@@ -18,7 +18,6 @@ import java.util.Set;
 
 import static ru.practicum.ewm.events.model.EventSort.EVENT_DATE;
 
-
 @Repository
 @Slf4j
 @RequiredArgsConstructor
@@ -98,33 +97,33 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
         BooleanExpression filters = event.eventDate.between(rangeStart, rangeEnd);
 
         if (text != null && !text.isBlank()) {
-            filters.and(event.description.likeIgnoreCase(text).or(event.annotation.likeIgnoreCase(text)));
+            filters = filters.and(event.description.likeIgnoreCase(text).or(event.annotation.likeIgnoreCase(text)));
         }
 
         if (userIds.size() > 0) {
-            filters.and(event.initiator.id.in(userIds));
+            filters = filters.and(event.initiator.id.in(userIds));
         }
 
         if (categoryIds != null && categoryIds.size() > 0) {
-            filters.and(event.category.id.in(categoryIds));
+            filters = filters.and(event.category.id.in(categoryIds));
         }
 
         if (states != null) {
-            filters.and(event.state.in(states));
+            filters = filters.and(event.state.in(states));
         }
 
         if (paid != null) {
-            filters.and(event.paid.eq(paid));
+            filters = filters.and(event.paid.eq(paid));
         }
 
         if (onlyAvailable) {
-            filters.and(event.participantLimit.gt(event.confirmedRequests));
+            filters = filters.and(event.participantLimit.gt(event.confirmedRequests));
         }
 
         List<Event> events = queryFactory
                 .selectFrom(event)
                 .where(filters)
-                .orderBy(sort == EVENT_DATE ? event.eventDate.asc() : event.views.asc())
+                .orderBy(sort == EVENT_DATE ? event.eventDate.desc() : event.views.desc())
                 .offset(from)
                 .limit(size)
                 .fetch();
