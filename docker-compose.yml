@@ -50,4 +50,5 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://MainServiceDB:5432/main
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
+      - STATISTIC_SERVER_URL=http://StatisticService:9090
       # - TZ=Europe/Moscow #For localhost only
