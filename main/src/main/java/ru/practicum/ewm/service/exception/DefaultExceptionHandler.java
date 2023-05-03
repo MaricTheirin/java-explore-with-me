@@ -94,7 +94,8 @@ public class DefaultExceptionHandler {
     ) {
         HttpStatus resultStatus = HttpStatus.BAD_REQUEST;
         if (exception.getRootCause() != null) {
-            if (exception.getRootCause().getMessage().contains("уникальности")) {
+            String exceptionText = exception.getRootCause().getMessage().toLowerCase();
+            if (exceptionText.contains("уникальности") || exceptionText.contains("unique")) {
                 resultStatus = HttpStatus.CONFLICT;
             }
         }
