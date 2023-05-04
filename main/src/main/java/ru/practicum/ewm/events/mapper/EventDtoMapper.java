@@ -1,7 +1,7 @@
 package ru.practicum.ewm.events.mapper;
 
 import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.practicum.ewm.categories.model.Category;
 import ru.practicum.ewm.events.dto.EventDto;
@@ -18,7 +18,7 @@ import static ru.practicum.ewm.events.mapper.EventLocationMapper.mapEventLocatio
 import static ru.practicum.ewm.users.mapper.UserDtoMapper.mapUserToResponseDto;
 import static ru.practicum.ewm.users.mapper.UserDtoMapper.mapUserToShortResponseDto;
 
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
 public class EventDtoMapper extends Mapper {
 

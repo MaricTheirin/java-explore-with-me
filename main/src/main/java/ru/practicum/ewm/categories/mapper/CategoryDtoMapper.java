@@ -1,11 +1,14 @@
 package ru.practicum.ewm.categories.mapper;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.practicum.ewm.categories.dto.CategoryDto;
 import ru.practicum.ewm.categories.dto.CategoryResponseDto;
 import ru.practicum.ewm.categories.model.Category;
 import ru.practicum.ewm.service.mapper.Mapper;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
 public class CategoryDtoMapper extends Mapper {
 
