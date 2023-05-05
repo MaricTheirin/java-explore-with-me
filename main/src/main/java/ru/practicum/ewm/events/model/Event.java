@@ -25,10 +25,10 @@ public class Event {
     @Column(name = "id")
     private long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 127)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 500)
     private String annotation;
 
     @ToString.Exclude
@@ -44,7 +44,7 @@ public class Event {
     @Timestamp
     private LocalDateTime publishedOn;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2000)
     private String description;
 
     @Column(name = "event_date", nullable = false)

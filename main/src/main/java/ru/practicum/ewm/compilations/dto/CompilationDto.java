@@ -1,23 +1,22 @@
 package ru.practicum.ewm.compilations.dto;
 
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 
-@Getter
-@Setter
-@ToString
-@NoArgsConstructor
+@Data
 public class CompilationDto {
 
     @NotNull
-    Set<Long> events;
+    private Set<Long> events;
 
     @NotNull
-    Boolean pinned;
+    private Boolean pinned;
 
     @NotBlank
-    String title;
+    @Length(min = 3, max = 127, message = "Длина должна быть в промежутке от 3 до 127 символов")
+    private String title;
 
 }

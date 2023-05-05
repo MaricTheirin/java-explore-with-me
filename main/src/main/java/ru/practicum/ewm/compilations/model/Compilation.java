@@ -35,7 +35,7 @@ public class Compilation {
     @Column
     private boolean pinned;
 
-    @Column(unique = true)
+    @Column(unique = true, length = 127)
     private String title;
 
 }
