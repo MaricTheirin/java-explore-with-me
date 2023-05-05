@@ -56,7 +56,7 @@ public class CompilationServiceImpl implements CompilationService {
                 .findById(compId)
                 .orElseThrow(() -> new NotFoundException(compId));
 
-        if (compilationDto.getTitle() != null) {
+        if (compilationDto.getTitle() != null && !compilationDto.getTitle().isBlank()) {
             log.debug(
                     "Изменено наименование подборки с \"{}\" на \"{}\"",
                     savedCompilation.getTitle(),
