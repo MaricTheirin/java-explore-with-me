@@ -8,11 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.categories.dto.CategoryDto;
 import ru.practicum.ewm.categories.dto.CategoryResponseDto;
 import ru.practicum.ewm.categories.exception.CategoryNotEmptyException;
-import ru.practicum.ewm.categories.exception.CategoryNotFoundException;
 import ru.practicum.ewm.categories.mapper.CategoryDtoMapper;
 import ru.practicum.ewm.categories.model.Category;
 import ru.practicum.ewm.categories.repository.CategoryRepository;
 import ru.practicum.ewm.events.repository.EventRepository;
+import ru.practicum.ewm.service.exception.NotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,7 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
     public void delete(long catId) {
         Category category = categoryRepository
                 .findById(catId)
-                .orElseThrow(() -> new CategoryNotFoundException(catId));
+                .orElseThrow(() -> new NotFoundException(catId));
         if (eventRepository.existsByCategoryId(catId)) {
             throw new CategoryNotEmptyException(catId);
         }
@@ -53,7 +53,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryResponseDto update(long catId, CategoryDto categoryDto) {
         Category storedCategory = categoryRepository
                 .findById(catId)
-                .orElseThrow(() -> new CategoryNotFoundException(catId));
+                .orElseThrow(() -> new NotFoundException(catId));
         if (!storedCategory.getName().equals(categoryDto.getName())) {
             log.debug("Наименование категории {} изменено на {}", storedCategory.getName(), categoryDto.getName());
             storedCategory.setName(categoryDto.getName());
@@ -74,7 +74,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryResponseDto get(long catId) {
         Category requestedCategory = categoryRepository
                 .findById(catId)
-                .orElseThrow(() -> new CategoryNotFoundException(catId));
+                .orElseThrow(() -> new NotFoundException(catId));
         log.debug("Получена категория {}", requestedCategory);
         return mapCategoryToResponseDto(requestedCategory);
     }

@@ -2,10 +2,10 @@ package ru.practicum.ewm.service.exception;
 
 import org.springframework.http.HttpStatus;
 
-public abstract class NotFoundException extends EwmException {
+public class NotFoundException extends EwmException {
 
-    public NotFoundException(String message) {
-        super(message, HttpStatus.NOT_FOUND);
+    public NotFoundException(long id) {
+        super("Сущность с id = " + id + " не обнаружена", HttpStatus.NOT_FOUND);
     }
 
 }

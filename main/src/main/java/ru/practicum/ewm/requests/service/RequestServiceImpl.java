@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.events.exception.EventNotAvailableForParticipationException;
 import ru.practicum.ewm.events.exception.EventNotEditableException;
-import ru.practicum.ewm.events.exception.EventNotFoundException;
 import ru.practicum.ewm.events.exception.EventParticipationLimitExceededException;
 import ru.practicum.ewm.events.model.Event;
 import ru.practicum.ewm.events.model.EventState;
@@ -14,12 +13,11 @@ import ru.practicum.ewm.events.repository.EventRepository;
 import ru.practicum.ewm.requests.dto.RequestResponseDto;
 import ru.practicum.ewm.requests.dto.RequestStatusUpdateDto;
 import ru.practicum.ewm.requests.dto.RequestStatusUpdateResponseDto;
-import ru.practicum.ewm.requests.exception.RequestNotFoundException;
 import ru.practicum.ewm.requests.mapper.RequestDtoMapper;
 import ru.practicum.ewm.requests.model.Request;
 import ru.practicum.ewm.requests.model.RequestState;
 import ru.practicum.ewm.requests.repository.RequestRepository;
-import ru.practicum.ewm.users.exception.UserNotFoundException;
+import ru.practicum.ewm.service.exception.NotFoundException;
 import ru.practicum.ewm.users.model.User;
 import ru.practicum.ewm.users.repository.UserRepository;
 import java.util.*;
@@ -51,8 +49,8 @@ public class RequestServiceImpl implements RequestService {
     @Override
     @Transactional
     public RequestResponseDto createRequest(long userId, long eventId) {
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException(eventId));
-        User requester = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(eventId));
+        User requester = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(userId));
         checkBeforeCreate(userId, event);
         Request newRequest = requestRepository.saveAndFlush(
                     Request.builder()
@@ -78,7 +76,7 @@ public class RequestServiceImpl implements RequestService {
     public RequestResponseDto cancelRequest(long userId, long requestId) {
         Request savedRequest = requestRepository
                 .getRequestByIdAndRequester_Id(requestId, userId)
-                .orElseThrow(() -> new RequestNotFoundException(requestId));
+                .orElseThrow(() -> new NotFoundException(requestId));
         if (savedRequest.getStatus() == PENDING) {
             log.debug("Запрос на участие с id = {} отменён", requestId);
             savedRequest.setStatus(CANCELED);
@@ -110,7 +108,7 @@ public class RequestServiceImpl implements RequestService {
     ) {
         Event event = eventRepository
                 .findByInitiator_IdAndId(userId, eventId)
-                .orElseThrow(() -> new EventNotFoundException(eventId));
+                .orElseThrow(() -> new NotFoundException(eventId));
 
         if (event.getConfirmedRequests() >= event.getParticipantLimit()) {
             throw new EventParticipationLimitExceededException(event.getId());

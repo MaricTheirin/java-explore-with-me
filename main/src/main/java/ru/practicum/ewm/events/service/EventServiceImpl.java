@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.categories.exception.CategoryNotFoundException;
 import ru.practicum.ewm.categories.model.Category;
 import ru.practicum.ewm.categories.repository.CategoryRepository;
 import ru.practicum.ewm.events.dto.*;
@@ -13,7 +12,7 @@ import ru.practicum.ewm.events.exception.*;
 import ru.practicum.ewm.events.mapper.EventDtoMapper;
 import ru.practicum.ewm.events.model.*;
 import ru.practicum.ewm.events.repository.*;
-import ru.practicum.ewm.users.exception.UserNotFoundException;
+import ru.practicum.ewm.service.exception.NotFoundException;
 import ru.practicum.ewm.users.model.User;
 import ru.practicum.ewm.users.repository.UserRepository;
 import ru.practicum.ewm.statistic.client.StatisticClient;
@@ -60,7 +59,7 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public EventResponseDto adminUpdateEvent(long eventId, EventDto eventDto) {
-        Event savedEvent = eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException(eventId));
+        Event savedEvent = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(eventId));
         checkBeforeAdminUpdate(savedEvent, eventDto);
         return updateEvent(savedEvent, eventDto);
     }
@@ -69,7 +68,7 @@ public class EventServiceImpl implements EventService {
     @Transactional
     public EventResponseDto userUpdateEvent(long userId, long eventId, EventDto eventDto) {
         Event savedEvent = eventRepository
-                .findByInitiator_IdAndId(userId, eventId).orElseThrow(() -> new EventNotFoundException(eventId));
+                .findByInitiator_IdAndId(userId, eventId).orElseThrow(() -> new NotFoundException(eventId));
         checkBeforeUserUpdate(savedEvent, eventDto);
         return updateEvent(savedEvent, eventDto);
     }
@@ -102,7 +101,7 @@ public class EventServiceImpl implements EventService {
     public EventResponseDto getEvent(long id, String ip, String url) {
         createHitToStatisticService(ip, url);
 
-        Event requestedEvent = eventRepository.findById(id).orElseThrow(() -> new EventNotFoundException(id));
+        Event requestedEvent = eventRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
         log.debug("Получено событие: {}", requestedEvent);
         return mapEventToResponseDto(requestedEvent);
     }
@@ -119,7 +118,7 @@ public class EventServiceImpl implements EventService {
     @Transactional(readOnly = true)
     public EventResponseDto getEvent(long userId, long eventId) {
         Event requestedEvent = eventRepository
-                .findByInitiator_IdAndId(userId, eventId).orElseThrow(() -> new EventNotFoundException(eventId));
+                .findByInitiator_IdAndId(userId, eventId).orElseThrow(() -> new NotFoundException(eventId));
         log.debug("Получено событие: {}", requestedEvent);
         return mapEventToResponseDto(requestedEvent);
     }
@@ -128,9 +127,9 @@ public class EventServiceImpl implements EventService {
     @Transactional
     public EventResponseDto createEvent(long userId, EventDto eventDto) {
         long categoryId = eventDto.getCategory();
-        User initiator = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        User initiator = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(userId));
         Category eventCategory =
-                categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotFoundException(categoryId));
+                categoryRepository.findById(categoryId).orElseThrow(() -> new NotFoundException(categoryId));
         EventLocation eventLocation =
                 eventLocationRepository.saveAndFlush(mapDtoToEventLocation(eventDto.getLocation()));
 
@@ -149,7 +148,7 @@ public class EventServiceImpl implements EventService {
         if (eventDto.getCategory() != null) {
             Category newCategory = categoryRepository
                     .findById(eventDto.getCategory())
-                    .orElseThrow(() -> new CategoryNotFoundException(eventDto.getCategory()));
+                    .orElseThrow(() -> new NotFoundException(eventDto.getCategory()));
             log.debug("Категория события изменено с {} на {}", savedEvent.getCategory(), newCategory);
             savedEvent.setCategory(newCategory);
         }

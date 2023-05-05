@@ -7,12 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.compilations.dto.CompilationDto;
 import ru.practicum.ewm.compilations.dto.CompilationResponseDto;
-import ru.practicum.ewm.compilations.exception.CompilationNotFoundException;
 import ru.practicum.ewm.compilations.mapper.CompilationDtoMapper;
 import ru.practicum.ewm.compilations.model.Compilation;
 import ru.practicum.ewm.compilations.repository.CompilationRepository;
 import ru.practicum.ewm.events.model.Event;
 import ru.practicum.ewm.events.repository.EventRepository;
+import ru.practicum.ewm.service.exception.NotFoundException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,7 +43,7 @@ public class CompilationServiceImpl implements CompilationService {
     public void delete(Long compId) {
         if (!compilationRepository.existsById(compId)) {
             log.debug("Подборка событий с id = {} не обнаружена", compId);
-            throw new CompilationNotFoundException(compId);
+            throw new NotFoundException(compId);
         }
         compilationRepository.deleteById(compId);
         log.debug("Подборка событий удалена");
@@ -54,7 +54,7 @@ public class CompilationServiceImpl implements CompilationService {
     public CompilationResponseDto updateCompilation(Long compId, CompilationDto compilationDto) {
         Compilation savedCompilation = compilationRepository
                 .findById(compId)
-                .orElseThrow(() -> new CompilationNotFoundException(compId));
+                .orElseThrow(() -> new NotFoundException(compId));
 
         if (compilationDto.getTitle() != null && !compilationDto.getTitle().equals(savedCompilation.getTitle())) {
             log.debug(
@@ -102,7 +102,7 @@ public class CompilationServiceImpl implements CompilationService {
     public CompilationResponseDto getCompilation(Long compId) {
         Compilation compilation = compilationRepository
                 .findById(compId)
-                .orElseThrow(() -> new CompilationNotFoundException(compId));
+                .orElseThrow(() -> new NotFoundException(compId));
         log.debug("Получена подборка {}", compilation);
         return mapCompilationToResponseDto(compilation);
     }

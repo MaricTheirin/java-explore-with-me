@@ -6,9 +6,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.ewm.service.exception.NotFoundException;
 import ru.practicum.ewm.users.dto.UserDto;
 import ru.practicum.ewm.users.dto.UserResponseDto;
-import ru.practicum.ewm.users.exception.UserNotFoundException;
 import ru.practicum.ewm.users.mapper.UserDtoMapper;
 import ru.practicum.ewm.users.model.User;
 import ru.practicum.ewm.users.repository.UserRepository;
@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     public void delete(long userId) {
         if (!userRepository.existsById(userId)) {
             log.debug("Пользователь с id = {} не обнаружен", userId);
-            throw new UserNotFoundException(userId);
+            throw new NotFoundException(userId);
         }
         userRepository.deleteById(userId);
         log.debug("Пользователь с id = {} удалён", userId);
