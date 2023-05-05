@@ -65,13 +65,13 @@ public class CompilationServiceImpl implements CompilationService {
             savedCompilation.setTitle(compilationDto.getTitle());
         }
 
-        if (compilationDto.getPinned() != null && compilationDto.getPinned() != savedCompilation.isPinned()) {
+        if (compilationDto.isPinned() != savedCompilation.isPinned()) {
             log.debug(
                     "Статус закреплённости подборки изменен с \"{}\" на \"{}\"",
                     savedCompilation.isPinned(),
-                    compilationDto.getPinned()
+                    compilationDto.isPinned()
             );
-            savedCompilation.setPinned(compilationDto.getPinned());
+            savedCompilation.setPinned(compilationDto.isPinned());
         }
 
         if (compilationDto.getEvents() != null) {
