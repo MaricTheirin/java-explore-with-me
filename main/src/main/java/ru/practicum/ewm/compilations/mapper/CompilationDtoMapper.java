@@ -20,7 +20,7 @@ public class CompilationDtoMapper extends Mapper {
         Compilation compilation = Compilation.builder()
                 .title(compilationDto.getTitle())
                 .events(events)
-                .pinned(compilationDto.getPinned())
+                .pinned(compilationDto.isPinned())
                 .build();
         log.trace(DEFAULT_MESSAGE, compilationDto, compilation);
         return compilation;
