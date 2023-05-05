@@ -77,7 +77,7 @@ public class RequestServiceImpl implements RequestService {
         Request savedRequest = requestRepository
                 .getRequestByIdAndRequester_Id(requestId, userId)
                 .orElseThrow(() -> new NotFoundException(requestId));
-        if (savedRequest.getStatus() == PENDING) {
+        if (savedRequest.getStatus() != CANCELED) {
             log.debug("Запрос на участие с id = {} отменён", requestId);
             savedRequest.setStatus(CANCELED);
         }
