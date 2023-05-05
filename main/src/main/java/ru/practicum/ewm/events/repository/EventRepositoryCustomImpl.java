@@ -93,8 +93,17 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
     ) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
         QEvent event = QEvent.event;
+        BooleanExpression filters;
 
-        BooleanExpression filters = event.eventDate.between(rangeStart, rangeEnd);
+        if (rangeStart == null && rangeEnd == null) {
+            filters = event.eventDate.after(LocalDateTime.now());
+        } else if (rangeStart == null) {
+            filters = event.eventDate.before(rangeEnd);
+        } else if (rangeEnd == null) {
+            filters = event.eventDate.after(rangeStart);
+        } else {
+            filters = event.eventDate.between(rangeStart, rangeEnd);
+        }
 
         if (text != null && !text.isBlank()) {
             filters = filters.and(event.description.likeIgnoreCase(text).or(event.annotation.likeIgnoreCase(text)));

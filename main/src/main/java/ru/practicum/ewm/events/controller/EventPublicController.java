@@ -28,15 +28,16 @@ public class EventPublicController {
             @RequestParam(required = false) String text,
             @RequestParam(required = false) Set<Long> categories,
             @RequestParam(required = false) boolean paid,
-            @RequestParam(defaultValue = "#{T(java.time.LocalDateTime).now()}") LocalDateTime rangeStart,
-            @RequestParam(defaultValue = "#{T(java.time.LocalDateTime).now().plusYears(99L)}") LocalDateTime rangeEnd,
+            @RequestParam(required = false) LocalDateTime rangeStart,
+            @RequestParam(required = false) LocalDateTime rangeEnd,
             @RequestParam(required = false) boolean onlyAvailable,
             @RequestParam(defaultValue = "EVENT_DATE") EventSort sort,
             @RequestParam(defaultValue = "0") @PositiveOrZero int from,
             @RequestParam(defaultValue = "10") @Positive int size,
             HttpServletRequest request
     ) {
-        log.info("Запрошен список событий с параметрами: text={}; categories={}; paid={}; rangeStart={}; rangeEnd={}; onlyAvailable = {}; sort = {}; from={}; size={}",
+        log.info("Запрошен список событий с параметрами: " +
+                "text={}; categories={}; paid={}; rangeStart={}; rangeEnd={}; onlyAvailable = {}; sort = {}; from={}; size={}",
                 text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size
         );
         return eventService.getEvents(

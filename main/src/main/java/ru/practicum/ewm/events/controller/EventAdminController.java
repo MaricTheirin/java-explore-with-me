@@ -29,8 +29,8 @@ public class EventAdminController {
             @RequestParam(name = "users") Set<Long> userIds,
             @RequestParam(required = false) EventState[] states,
             @RequestParam(name = "categories") Set<Long> categoryIds,
-            @RequestParam(defaultValue = "#{T(java.time.LocalDateTime).now()}") LocalDateTime rangeStart,
-            @RequestParam(defaultValue = "#{T(java.time.LocalDateTime).now().plusYears(99L)}") LocalDateTime rangeEnd,
+            @RequestParam(required = false) LocalDateTime rangeStart,
+            @RequestParam(required = false) LocalDateTime rangeEnd,
             @RequestParam(defaultValue = "0") @PositiveOrZero int from,
             @RequestParam(defaultValue = "10") @Positive int size
     ) {
