@@ -2,6 +2,7 @@ package ru.practicum.ewm.events.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +39,9 @@ public class EventServiceImpl implements EventService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final StatisticClient statisticClient;
+
+    @Value("${app.name}")
+    private String APPLICATION_NAME;
 
     @Override
     @Transactional(readOnly = true)
@@ -249,7 +253,7 @@ public class EventServiceImpl implements EventService {
 
     private void createHitToStatisticService(String ip, String url) {
         EndpointHitDto endpointHitDto = EndpointHitDto.builder()
-                .app("EWM-Main-Service")
+                .app(APPLICATION_NAME)
                 .uri(url)
                 .ip(ip)
                 .timestamp(LocalDateTime.now())
