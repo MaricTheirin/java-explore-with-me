@@ -27,10 +27,10 @@ public class EventPublicController {
     public List<EventResponseDto> getEvents(
             @RequestParam(required = false) String text,
             @RequestParam(required = false) Set<Long> categories,
-            @RequestParam(required = false) boolean paid,
+            @RequestParam(required = false) Boolean paid,
             @RequestParam(required = false) LocalDateTime rangeStart,
             @RequestParam(required = false) LocalDateTime rangeEnd,
-            @RequestParam(required = false) boolean onlyAvailable,
+            @RequestParam(defaultValue = "false") boolean onlyAvailable,
             @RequestParam(defaultValue = "EVENT_DATE") EventSort sort,
             @RequestParam(defaultValue = "0") @PositiveOrZero int from,
             @RequestParam(defaultValue = "10") @Positive int size,
