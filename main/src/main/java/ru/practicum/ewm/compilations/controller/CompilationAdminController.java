@@ -5,8 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.compilations.dto.CompilationDto;
+import ru.practicum.ewm.compilations.dto.CompilationCreateDto;
 import ru.practicum.ewm.compilations.dto.CompilationResponseDto;
+import ru.practicum.ewm.compilations.dto.CompilationUpdateDto;
 import ru.practicum.ewm.compilations.service.CompilationService;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -22,7 +23,7 @@ public class CompilationAdminController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CompilationResponseDto addCompilation(@RequestBody @Valid CompilationDto compilationDto) {
+    public CompilationResponseDto addCompilation(@RequestBody @Valid CompilationCreateDto compilationDto) {
         log.info("Запрошено добавление подборки {}", compilationDto);
         return compilationService.create(compilationDto);
     }
@@ -37,7 +38,7 @@ public class CompilationAdminController {
     @PatchMapping("/{compId}")
     public CompilationResponseDto updateCompilation(
             @PathVariable @Positive Long compId,
-            @RequestBody CompilationDto compilationDto
+            @RequestBody @Valid CompilationUpdateDto compilationDto
     ) {
         log.info("Запрошено обновление подборки с id = {} на {}", compId, compilationDto);
         return compilationService.updateCompilation(compId, compilationDto);

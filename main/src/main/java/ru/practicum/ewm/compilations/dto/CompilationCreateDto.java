@@ -3,12 +3,13 @@ package ru.practicum.ewm.compilations.dto;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotBlank;
+import java.util.Collections;
 import java.util.Set;
 
 @Data
-public class CompilationDto {
+public class CompilationCreateDto {
 
-    private Set<Long> events;
+    private Set<Long> events = Collections.emptySet();
 
     private boolean pinned;
 

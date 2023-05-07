@@ -5,8 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.compilations.dto.CompilationDto;
+import ru.practicum.ewm.compilations.dto.CompilationCreateDto;
 import ru.practicum.ewm.compilations.dto.CompilationResponseDto;
+import ru.practicum.ewm.compilations.dto.CompilationUpdateDto;
 import ru.practicum.ewm.compilations.mapper.CompilationDtoMapper;
 import ru.practicum.ewm.compilations.model.Compilation;
 import ru.practicum.ewm.compilations.repository.CompilationRepository;
@@ -30,7 +31,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional
-    public CompilationResponseDto create(CompilationDto compilationDto) {
+    public CompilationResponseDto create(CompilationCreateDto compilationDto) {
         Set<Event> connectedEvents = eventRepository.findAllByIdIn(compilationDto.getEvents());
         Compilation savedCompilation =
                 compilationRepository.saveAndFlush(mapDtoToCompilation(compilationDto, connectedEvents));
@@ -51,7 +52,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional
-    public CompilationResponseDto updateCompilation(Long compId, CompilationDto compilationDto) {
+    public CompilationResponseDto updateCompilation(Long compId, CompilationUpdateDto compilationDto) {
         Compilation savedCompilation = compilationRepository
                 .findById(compId)
                 .orElseThrow(() -> new NotFoundException(compId));
@@ -65,13 +66,13 @@ public class CompilationServiceImpl implements CompilationService {
             savedCompilation.setTitle(compilationDto.getTitle());
         }
 
-        if (compilationDto.isPinned() != savedCompilation.isPinned()) {
+        if (compilationDto.getPinned() != null) {
             log.debug(
                     "Статус закреплённости подборки изменен с \"{}\" на \"{}\"",
                     savedCompilation.isPinned(),
-                    compilationDto.isPinned()
+                    compilationDto.getPinned()
             );
-            savedCompilation.setPinned(compilationDto.isPinned());
+            savedCompilation.setPinned(compilationDto.getPinned());
         }
 
         if (compilationDto.getEvents() != null) {

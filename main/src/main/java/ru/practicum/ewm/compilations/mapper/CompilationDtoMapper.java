@@ -3,7 +3,7 @@ package ru.practicum.ewm.compilations.mapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.practicum.ewm.compilations.dto.CompilationDto;
+import ru.practicum.ewm.compilations.dto.CompilationCreateDto;
 import ru.practicum.ewm.compilations.dto.CompilationResponseDto;
 import ru.practicum.ewm.compilations.model.Compilation;
 import ru.practicum.ewm.events.mapper.EventDtoMapper;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CompilationDtoMapper extends Mapper {
 
-    public static Compilation mapDtoToCompilation(CompilationDto compilationDto, Set<Event> events) {
+    public static Compilation mapDtoToCompilation(CompilationCreateDto compilationDto, Set<Event> events) {
         Compilation compilation = Compilation.builder()
                 .title(compilationDto.getTitle())
                 .events(events)
