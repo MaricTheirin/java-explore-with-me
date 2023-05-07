@@ -106,6 +106,19 @@ public class DefaultExceptionHandler {
         );
     }
 
+    @ExceptionHandler(Throwable.class)
+    protected ResponseEntity<ExceptionMessage> handleOtherExceptions(
+            Throwable exception,
+            HttpServletRequest request
+    ) {
+        HttpStatus resultStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        logException(exception, request);
+        return new ResponseEntity<>(
+                new ExceptionMessage(exception.getMessage(), request.getRequestURI(), resultStatus.name()),
+                resultStatus
+        );
+    }
+
     private void logException(Throwable throwable, HttpServletRequest request) {
         log.debug(
                 "В ответ на запрос {}: {} выброшена ошибка: {}",
