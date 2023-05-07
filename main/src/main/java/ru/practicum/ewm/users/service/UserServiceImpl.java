@@ -48,9 +48,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserResponseDto> getAll(List<Long> ids, int from, int size) {
         Pageable pageable = PageRequest.of(from, size);
-        List<UserResponseDto> requestedUsers = userRepository
-                .getAllByIdIn(ids, pageable)
-                .stream()
+
+        List<UserResponseDto> requestedUsers =
+                (ids == null ?
+                        userRepository.findAll(pageable).getContent() :
+                        userRepository.getAllByIdIn(ids, pageable)
+                ).stream()
                 .map(UserDtoMapper::mapUserToResponseDto)
                 .collect(Collectors.toList());
         log.trace("Получен список пользователей: {}", requestedUsers);
