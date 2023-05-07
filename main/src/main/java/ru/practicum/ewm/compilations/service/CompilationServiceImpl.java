@@ -14,6 +14,7 @@ import ru.practicum.ewm.compilations.repository.CompilationRepository;
 import ru.practicum.ewm.events.model.Event;
 import ru.practicum.ewm.events.repository.EventRepository;
 import ru.practicum.ewm.service.exception.NotFoundException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -32,7 +33,9 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     @Transactional
     public CompilationResponseDto create(CompilationCreateDto compilationDto) {
-        Set<Event> connectedEvents = eventRepository.findAllByIdIn(compilationDto.getEvents());
+        Set<Event> connectedEvents = compilationDto.getEvents() != null ?
+                eventRepository.findAllByIdIn(compilationDto.getEvents()) :
+                Collections.emptySet();
         Compilation savedCompilation =
                 compilationRepository.saveAndFlush(mapDtoToCompilation(compilationDto, connectedEvents));
         log.debug("Результат создания подборки: {}", savedCompilation);
