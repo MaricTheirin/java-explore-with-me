@@ -59,14 +59,6 @@ public class RequestServiceImpl implements RequestService {
                     .status(event.isRequestModeration() ? PENDING : CONFIRMED)
                     .build()
         );
-        if (newRequest.getStatus() == CONFIRMED) {
-            int updatedConfirmedRequestsCount = event.getConfirmedRequests() + 1;
-            log.debug("Количество участников события увеличено с {} до {}",
-                    event.getConfirmedRequests(),
-                    updatedConfirmedRequestsCount
-            );
-            event.setConfirmedRequests(event.getConfirmedRequests() + 1);
-        }
         log.debug("Создан запрос на участие {}", newRequest);
         return mapRequestToResponseDto(newRequest);
     }
@@ -98,7 +90,6 @@ public class RequestServiceImpl implements RequestService {
                 .map(RequestDtoMapper::mapRequestToResponseDto)
                 .collect(Collectors.toList());
     }
-
     @Override
     @Transactional
     public RequestStatusUpdateResponseDto updateEventRequestStatus(
@@ -110,7 +101,9 @@ public class RequestServiceImpl implements RequestService {
                 .findByInitiator_IdAndId(userId, eventId)
                 .orElseThrow(() -> new NotFoundException(eventId));
 
-        if (event.getConfirmedRequests() >= event.getParticipantLimit()) {
+        int confirmedRequests = requestRepository.countByEvent_IdAndStatus(eventId, CONFIRMED);
+
+        if (confirmedRequests >= event.getParticipantLimit()) {
             throw new EventParticipationLimitExceededException(event.getId());
         }
 
@@ -127,11 +120,11 @@ public class RequestServiceImpl implements RequestService {
                 .map(Request::getId)
                 .collect(Collectors.toSet());
 
-        if (event.getConfirmedRequests() + pendingIds.size() > event.getParticipantLimit()) {
+        if (confirmedRequests + pendingIds.size() > event.getParticipantLimit()) {
             throw new EventParticipationLimitExceededException(event.getId());
         }
 
-        updateParticipationsState(event, pendingIds, statusUpdateDto.getStatus());
+        updateRequestsState(pendingIds, statusUpdateDto.getStatus());
 
         RequestStatusUpdateResponseDto requestStatus = new RequestStatusUpdateResponseDto();
 
@@ -153,20 +146,9 @@ public class RequestServiceImpl implements RequestService {
         return requestStatus;
     }
 
-    private void updateParticipationsState(Event event, Set<Long> participationIds, RequestState newState) {
-        int previousRequestsCount = event.getConfirmedRequests();
-        requestRepository.updateStatusByIdIn(newState, participationIds);
-        event.setConfirmedRequests(
-                event.getConfirmedRequests() + (newState == CONFIRMED ? 1 : -1) * participationIds.size()
-        );
-
-        log.debug(
-                "Для запросов {} установлен статус {}. Количество подтверждённых запросов изменилось с {} на {}",
-                participationIds,
-                newState,
-                previousRequestsCount,
-                event.getConfirmedRequests()
-        );
+    private void updateRequestsState(Set<Long> requestIds, RequestState newState) {
+        requestRepository.updateStatusByIdIn(newState, requestIds);
+        log.debug("Для запросов {} установлен статус {}", requestIds, newState);
     }
 
     private void checkBeforeCreate(long userId, Event event) {
@@ -199,7 +181,7 @@ public class RequestServiceImpl implements RequestService {
             throw new EventNotAvailableForParticipationException("Нельзя участвовать в неопубликованном событии");
         }
 
-        if (event.getParticipantLimit() <= event.getConfirmedRequests()) {
+        if (event.getParticipantLimit() <= requestRepository.countByEvent_IdAndStatus(event.getId(), CONFIRMED)) {
             log.warn("Пользователь с id = {} пытается участвовать в заполненном событии с id = {}", userId, event.getId());
             throw new EventParticipationLimitExceededException(event.getId());
         }

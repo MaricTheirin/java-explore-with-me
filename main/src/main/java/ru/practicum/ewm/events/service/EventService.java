@@ -6,8 +6,7 @@ import ru.practicum.ewm.events.dto.EventShortResponseDto;
 import ru.practicum.ewm.events.model.EventSort;
 import ru.practicum.ewm.events.model.EventState;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public interface EventService {
 
@@ -46,5 +45,7 @@ public interface EventService {
     EventResponseDto getEvent(long userId, long eventId);
 
     EventResponseDto createEvent(long userId, EventDto eventDto);
+
+    Map<Long, Integer> getConfirmedRequestsCount(Collection<Long> eventIds);
 
 }

@@ -76,9 +76,6 @@ public class Event {
     @Column
     private long views;
 
-    @Column(name = "confirmed_requests")
-    private int confirmedRequests;
-
     @ToString.Include(name = "annotation")
     private String getLimitedAnnotation() {
         return limitString(annotation, 30);

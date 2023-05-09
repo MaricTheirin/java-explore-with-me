@@ -8,15 +8,13 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.compilations.dto.CompilationCreateDto;
 import ru.practicum.ewm.compilations.dto.CompilationResponseDto;
 import ru.practicum.ewm.compilations.dto.CompilationUpdateDto;
-import ru.practicum.ewm.compilations.mapper.CompilationDtoMapper;
 import ru.practicum.ewm.compilations.model.Compilation;
 import ru.practicum.ewm.compilations.repository.CompilationRepository;
 import ru.practicum.ewm.events.model.Event;
 import ru.practicum.ewm.events.repository.EventRepository;
+import ru.practicum.ewm.events.service.EventService;
 import ru.practicum.ewm.service.exception.NotFoundException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static ru.practicum.ewm.compilations.mapper.CompilationDtoMapper.mapCompilationToResponseDto;
@@ -29,6 +27,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
+    private final EventService eventService;
 
     @Override
     @Transactional
@@ -39,7 +38,7 @@ public class CompilationServiceImpl implements CompilationService {
         Compilation savedCompilation =
                 compilationRepository.saveAndFlush(mapDtoToCompilation(compilationDto, connectedEvents));
         log.debug("Результат создания подборки: {}", savedCompilation);
-        return mapCompilationToResponseDto(savedCompilation);
+        return countRequestsAndMapToResponse(savedCompilation);
     }
 
     @Override
@@ -82,7 +81,8 @@ public class CompilationServiceImpl implements CompilationService {
             log.debug("Список событий подборки изменён и состоит из следующих id: {}", compilationDto.getEvents());
             savedCompilation.setEvents(eventRepository.findAllByIdIn(compilationDto.getEvents()));
         }
-        return mapCompilationToResponseDto(savedCompilation);
+
+        return countRequestsAndMapToResponse(savedCompilation);
     }
 
     @Override
@@ -95,10 +95,7 @@ public class CompilationServiceImpl implements CompilationService {
             requestedCompilations = compilationRepository.findByPinned(pinned, PageRequest.of(from, size));
         }
         log.debug("Найдены следующие подборки: {}", requestedCompilations);
-        return requestedCompilations
-                .stream()
-                .map(CompilationDtoMapper::mapCompilationToResponseDto)
-                .collect(Collectors.toList());
+        return countRequestsAndMapToResponse(requestedCompilations);
     }
 
     @Override
@@ -108,7 +105,30 @@ public class CompilationServiceImpl implements CompilationService {
                 .findById(compId)
                 .orElseThrow(() -> new NotFoundException(compId));
         log.debug("Получена подборка {}", compilation);
-        return mapCompilationToResponseDto(compilation);
+        return countRequestsAndMapToResponse(compilation);
+    }
+
+    private CompilationResponseDto countRequestsAndMapToResponse(Compilation compilation) {
+        Set<Long> connectedEventsIds = getConnectedEventsIds(List.of(compilation));
+        return mapCompilationToResponseDto(compilation, eventService.getConfirmedRequestsCount(connectedEventsIds));
+    }
+
+    private List<CompilationResponseDto> countRequestsAndMapToResponse(Collection<Compilation> compilations) {
+        Set<Long> connectedEventsIds = getConnectedEventsIds(compilations);
+        Map<Long, Integer> confirmedRequests = eventService.getConfirmedRequestsCount(connectedEventsIds);
+
+        return compilations
+                .stream()
+                .map(compilation -> mapCompilationToResponseDto(compilation, confirmedRequests))
+                .collect(Collectors.toList());
+    }
+
+    private Set<Long> getConnectedEventsIds(Collection<Compilation> compilations) {
+        return compilations
+                .stream()
+                .flatMap(compilation -> compilation.getEvents().stream())
+                .map(Event::getId)
+                .collect(Collectors.toSet());
     }
 
 }

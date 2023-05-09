@@ -41,7 +41,7 @@ public class EventDtoMapper extends Mapper {
         return mappedEvent;
     }
 
-    public static EventResponseDto mapEventToResponseDto(Event event) {
+    public static EventResponseDto mapEventToResponseDto(Event event, int confirmedRequests) {
         EventResponseDto mappedResponseDto = EventResponseDto.builder()
                 .id(event.getId())
                 .title(event.getTitle())
@@ -58,14 +58,14 @@ public class EventDtoMapper extends Mapper {
                 .requestModeration(event.isRequestModeration())
                 .state(event.getState())
                 .views(event.getViews())
-                .confirmedRequests(event.getConfirmedRequests())
+                .confirmedRequests(confirmedRequests)
                 .build();
 
         log.trace(DEFAULT_MESSAGE, event, mappedResponseDto);
         return mappedResponseDto;
     }
 
-    public static EventShortResponseDto mapEventToShortResponseDto(Event event) {
+    public static EventShortResponseDto mapEventToShortResponseDto(Event event, int confirmedRequests) {
         EventShortResponseDto mappedShortResponseDto = EventShortResponseDto.builder()
                 .id(event.getId())
                 .title(event.getTitle())
@@ -75,7 +75,7 @@ public class EventDtoMapper extends Mapper {
                 .initiator(mapUserToShortResponseDto(event.getInitiator()))
                 .paid(event.isPaid())
                 .views(event.getViews())
-                .confirmedRequests(event.getConfirmedRequests())
+                .confirmedRequests(confirmedRequests)
                 .build();
 
         log.trace(DEFAULT_MESSAGE, event, mappedShortResponseDto);
