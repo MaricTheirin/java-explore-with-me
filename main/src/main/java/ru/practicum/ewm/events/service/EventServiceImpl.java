@@ -319,7 +319,7 @@ public class EventServiceImpl implements EventService {
         try {
             List<EndpointHitsResultDto> hits = statisticClient.getStats(
                     LocalDateTime.now().minusYears(1),
-                    LocalDateTime.now().plusYears(1),
+                    LocalDateTime.now(),
                     new ArrayList<>(uriToGetStats.keySet())
             );
             log.trace("Получена статистика просмотров: {}", hits);
