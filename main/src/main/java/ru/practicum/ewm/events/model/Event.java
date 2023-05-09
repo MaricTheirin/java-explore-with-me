@@ -73,9 +73,6 @@ public class Event {
     @Column
     private EventState state;
 
-    @Column
-    private long views;
-
     @ToString.Include(name = "annotation")
     private String getLimitedAnnotation() {
         return limitString(annotation, 30);

@@ -41,7 +41,7 @@ public class EventDtoMapper extends Mapper {
         return mappedEvent;
     }
 
-    public static EventResponseDto mapEventToResponseDto(Event event, int confirmedRequests) {
+    public static EventResponseDto mapEventToResponseDto(Event event, int confirmedRequests, long views) {
         EventResponseDto mappedResponseDto = EventResponseDto.builder()
                 .id(event.getId())
                 .title(event.getTitle())
@@ -57,7 +57,7 @@ public class EventDtoMapper extends Mapper {
                 .participantLimit(event.getParticipantLimit())
                 .requestModeration(event.isRequestModeration())
                 .state(event.getState())
-                .views(event.getViews())
+                .views(views)
                 .confirmedRequests(confirmedRequests)
                 .build();
 
@@ -65,7 +65,7 @@ public class EventDtoMapper extends Mapper {
         return mappedResponseDto;
     }
 
-    public static EventShortResponseDto mapEventToShortResponseDto(Event event, int confirmedRequests) {
+    public static EventShortResponseDto mapEventToShortResponseDto(Event event, int confirmedRequests, long views) {
         EventShortResponseDto mappedShortResponseDto = EventShortResponseDto.builder()
                 .id(event.getId())
                 .title(event.getTitle())
@@ -74,7 +74,7 @@ public class EventDtoMapper extends Mapper {
                 .eventDate(event.getEventDate())
                 .initiator(mapUserToShortResponseDto(event.getInitiator()))
                 .paid(event.isPaid())
-                .views(event.getViews())
+                .views(views)
                 .confirmedRequests(confirmedRequests)
                 .build();
 

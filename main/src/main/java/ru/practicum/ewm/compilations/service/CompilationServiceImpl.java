@@ -10,11 +10,13 @@ import ru.practicum.ewm.compilations.dto.CompilationResponseDto;
 import ru.practicum.ewm.compilations.dto.CompilationUpdateDto;
 import ru.practicum.ewm.compilations.model.Compilation;
 import ru.practicum.ewm.compilations.repository.CompilationRepository;
+import ru.practicum.ewm.events.dto.EventShortResponseDto;
 import ru.practicum.ewm.events.model.Event;
 import ru.practicum.ewm.events.repository.EventRepository;
 import ru.practicum.ewm.events.service.EventService;
 import ru.practicum.ewm.service.exception.NotFoundException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static ru.practicum.ewm.compilations.mapper.CompilationDtoMapper.mapCompilationToResponseDto;
@@ -95,7 +97,7 @@ public class CompilationServiceImpl implements CompilationService {
             requestedCompilations = compilationRepository.findByPinned(pinned, PageRequest.of(from, size));
         }
         log.debug("Найдены следующие подборки: {}", requestedCompilations);
-        return countRequestsAndMapToResponse(requestedCompilations);
+        return getEventStatsAndMapToResponse(requestedCompilations);
     }
 
     @Override
@@ -109,26 +111,23 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     private CompilationResponseDto countRequestsAndMapToResponse(Compilation compilation) {
-        Set<Long> connectedEventsIds = getConnectedEventsIds(List.of(compilation));
-        return mapCompilationToResponseDto(compilation, eventService.getConfirmedRequestsCount(connectedEventsIds));
+        return getEventStatsAndMapToResponse(List.of(compilation)).stream().findFirst().orElseThrow();
     }
 
-    private List<CompilationResponseDto> countRequestsAndMapToResponse(Collection<Compilation> compilations) {
-        Set<Long> connectedEventsIds = getConnectedEventsIds(compilations);
-        Map<Long, Integer> confirmedRequests = eventService.getConfirmedRequestsCount(connectedEventsIds);
+    private List<CompilationResponseDto> getEventStatsAndMapToResponse(Collection<Compilation> compilations) {
+        Map<Long, EventShortResponseDto> connectedEventsWithStats = eventService
+                .getStatsAndMapToShortResponseDtos(compilations
+                        .stream()
+                        .map(Compilation::getEvents)
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toList()))
+                .stream()
+                .collect(Collectors.toMap(EventShortResponseDto::getId, Function.identity()));
 
         return compilations
                 .stream()
-                .map(compilation -> mapCompilationToResponseDto(compilation, confirmedRequests))
+                .map(compilation -> mapCompilationToResponseDto(compilation, connectedEventsWithStats))
                 .collect(Collectors.toList());
-    }
-
-    private Set<Long> getConnectedEventsIds(Collection<Compilation> compilations) {
-        return compilations
-                .stream()
-                .flatMap(compilation -> compilation.getEvents().stream())
-                .map(Event::getId)
-                .collect(Collectors.toSet());
     }
 
 }

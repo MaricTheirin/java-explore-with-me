@@ -14,8 +14,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static ru.practicum.ewm.events.mapper.EventDtoMapper.mapEventToShortResponseDto;
-
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CompilationDtoMapper extends Mapper {
@@ -32,13 +30,12 @@ public class CompilationDtoMapper extends Mapper {
 
     public static CompilationResponseDto mapCompilationToResponseDto(
             Compilation compilation,
-            Map<Long, Integer> confirmedRequests
+            Map<Long, EventShortResponseDto> eventStats
     ) {
-
         List<EventShortResponseDto> connectedEvents = compilation
                 .getEvents()
                 .stream()
-                .map(event -> mapEventToShortResponseDto(event, confirmedRequests.getOrDefault(event.getId(), 0)))
+                .map(event -> eventStats.get(event.getId()))
                 .collect(Collectors.toList());
 
         CompilationResponseDto responseDto = CompilationResponseDto.builder()

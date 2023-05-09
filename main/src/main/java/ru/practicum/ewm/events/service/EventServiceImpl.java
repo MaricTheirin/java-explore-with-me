@@ -15,6 +15,7 @@ import ru.practicum.ewm.events.repository.*;
 import ru.practicum.ewm.requests.model.ConfirmedRequestCount;
 import ru.practicum.ewm.requests.repository.RequestRepository;
 import ru.practicum.ewm.service.exception.NotFoundException;
+import ru.practicum.ewm.statistic.dto.EndpointHitsResultDto;
 import ru.practicum.ewm.users.model.User;
 import ru.practicum.ewm.users.repository.UserRepository;
 import ru.practicum.ewm.statistic.client.StatisticClient;
@@ -58,7 +59,7 @@ public class EventServiceImpl implements EventService {
         List<Event> foundEvents =
                 eventRepository.getAdminEvents(userIds, states, categoryIds, rangeStart, rangeEnd, from, size);
         log.debug("Получены события: {}", foundEvents);
-        return getConfirmedRequestsAndMapToResponseDtos(foundEvents);
+        return getStatsAndMapToResponseDtos(foundEvents);
     }
 
     @Override
@@ -98,7 +99,7 @@ public class EventServiceImpl implements EventService {
         List<Event> foundEvents =
                 eventRepository.getEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
         log.debug("Результат: {}", foundEvents);
-        return getConfirmedRequestsAndMapToResponseDtos(foundEvents);
+        return getStatsAndMapToResponseDtos(foundEvents);
     }
 
     @Override
@@ -108,7 +109,7 @@ public class EventServiceImpl implements EventService {
 
         Event requestedEvent = eventRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
         log.debug("Получено событие: {}", requestedEvent);
-        return getConfirmedRequestsAndMapToResponseDto(requestedEvent);
+        return getStatsAndMapToResponseDto(requestedEvent);
     }
 
     @Override
@@ -116,7 +117,7 @@ public class EventServiceImpl implements EventService {
     public List<EventShortResponseDto> getEvents(long userId, int from, int size) {
         List<Event> requestedEvents = eventRepository.findAllByInitiator_Id(userId, PageRequest.of(from, size));
         log.debug("Получены события: {}", requestedEvents);
-        return getConfirmedRequestsAndMapToShortResponseDtos(requestedEvents);
+        return getStatsAndMapToShortResponseDtos(requestedEvents);
     }
 
     @Override
@@ -125,7 +126,7 @@ public class EventServiceImpl implements EventService {
         Event requestedEvent = eventRepository
                 .findByInitiator_IdAndId(userId, eventId).orElseThrow(() -> new NotFoundException(eventId));
         log.debug("Получено событие: {}", requestedEvent);
-        return getConfirmedRequestsAndMapToResponseDto(requestedEvent);
+        return getStatsAndMapToResponseDto(requestedEvent);
     }
 
     @Override
@@ -140,7 +141,7 @@ public class EventServiceImpl implements EventService {
 
         Event createdEvent = eventRepository.save(mapDtoToEvent(eventDto, initiator, eventCategory, eventLocation));
         log.debug("Создано событие: {}", createdEvent);
-        return mapEventToResponseDto(createdEvent, 0);
+        return mapEventToResponseDto(createdEvent, 0, 0L);
     }
 
     private EventResponseDto updateEvent(Event savedEvent, EventDto eventDto) {
@@ -221,7 +222,7 @@ public class EventServiceImpl implements EventService {
             log.debug("Статус события изменён на {}", savedEvent.getState());
         }
 
-        return getConfirmedRequestsAndMapToResponseDto(savedEvent);
+        return getStatsAndMapToResponseDto(savedEvent);
     }
 
     private void checkBeforeAdminUpdate(Event savedEvent, EventDto eventDto) {
@@ -267,37 +268,71 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    private EventResponseDto getConfirmedRequestsAndMapToResponseDto(Event event) {
-        return mapEventToResponseDto(event, requestRepository.countByEvent_IdAndStatus(event.getId(), CONFIRMED));
+    private EventResponseDto getStatsAndMapToResponseDto(Event event) {
+        return mapEventToResponseDto(
+                event,
+                requestRepository.countByEvent_IdAndStatus(event.getId(), CONFIRMED),
+                getEventsViewsCount(List.of(event.getId())).getOrDefault(event.getId(), 0L)
+        );
     }
 
-    private List<EventResponseDto> getConfirmedRequestsAndMapToResponseDtos(List<Event> events) {
-        Map<Long, Integer> confirmedRequests = getConfirmedRequestsCount(events);
+    private List<EventResponseDto> getStatsAndMapToResponseDtos(List<Event> events) {
+        Collection<Long> eventIds = events.stream().map(Event::getId).collect(Collectors.toList());
+        Map<Long, Integer> confirmedRequests = getConfirmedRequestsCount(eventIds);
+        Map<Long, Long> views = getEventsViewsCount(eventIds);
         return events
                 .stream()
-                .map(event -> mapEventToResponseDto(event, confirmedRequests.getOrDefault(event.getId(), 0)))
-                .collect(Collectors.toList());
+                .map(event -> mapEventToResponseDto(
+                        event,
+                        confirmedRequests.getOrDefault(event.getId(), 0),
+                        views.getOrDefault(event.getId(), 0L))
+                ).collect(Collectors.toList());
     }
 
-    private List<EventShortResponseDto> getConfirmedRequestsAndMapToShortResponseDtos(List<Event> events) {
-        Map<Long, Integer> confirmedRequests = getConfirmedRequestsCount(events);
+    public List<EventShortResponseDto> getStatsAndMapToShortResponseDtos(Collection<Event> events) {
+        Collection<Long> eventIds = events.stream().map(Event::getId).collect(Collectors.toList());
+        Map<Long, Integer> confirmedRequests = getConfirmedRequestsCount(eventIds);
+        Map<Long, Long> views = getEventsViewsCount(eventIds);
+
         return events
                 .stream()
-                .map(event -> mapEventToShortResponseDto(event, confirmedRequests.getOrDefault(event.getId(), 0)))
-                .collect(Collectors.toList());
+                .map(event -> mapEventToShortResponseDto(
+                        event,
+                        confirmedRequests.getOrDefault(event.getId(), 0),
+                        views.getOrDefault(event.getId(), 0L))
+                ).collect(Collectors.toList());
     }
 
-    private Map<Long, Integer> getConfirmedRequestsCount(List<Event> events) {
-        return getConfirmedRequestsCount(events.stream().map(Event::getId).collect(Collectors.toList()));
-    }
-
-    public Map<Long, Integer> getConfirmedRequestsCount(Collection<Long> eventIds) {
+    private Map<Long, Integer> getConfirmedRequestsCount(Collection<Long> eventIds) {
         Map<Long, Integer> confirmedRequestCounts = requestRepository
                 .countAllByEvent_IdInAndStatusIs(eventIds, CONFIRMED)
                 .stream()
                 .collect(Collectors.toMap(ConfirmedRequestCount::getEventId, ConfirmedRequestCount::getConfirmed));
         log.trace("Получены списки подтверждённых запросов: {}", confirmedRequestCounts);
         return confirmedRequestCounts;
+    }
+
+    private Map<Long, Long> getEventsViewsCount(Collection<Long> eventsUris) {
+        Map<String, Long> uriToGetStats = eventsUris
+                .stream()
+                .collect(Collectors.toMap(x -> "/events/".concat(Long.toString(x)), y -> y));
+        try {
+            List<EndpointHitsResultDto> hits = statisticClient.getStats(
+                    LocalDateTime.now().minusYears(1),
+                    LocalDateTime.now().plusYears(1),
+                    new ArrayList<>(uriToGetStats.keySet())
+            );
+            log.trace("Получена статистика просмотров: {}", hits);
+
+            Map<Long, Long> viewStats = hits
+                    .stream()
+                    .collect(Collectors.toMap(x -> uriToGetStats.get(x.getUri()), EndpointHitsResultDto::getHits));
+            log.trace("Статистика просмотров в разрезе URL: {}", viewStats);
+            return viewStats;
+        } catch (Exception e) {
+            log.warn("При получении информации из сервиса статистики произошла ошибка: {}", e.getMessage());
+            return Collections.emptyMap();
+        }
     }
 
 }

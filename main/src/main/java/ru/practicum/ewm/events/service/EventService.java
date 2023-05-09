@@ -3,6 +3,7 @@ package ru.practicum.ewm.events.service;
 import ru.practicum.ewm.events.dto.EventDto;
 import ru.practicum.ewm.events.dto.EventResponseDto;
 import ru.practicum.ewm.events.dto.EventShortResponseDto;
+import ru.practicum.ewm.events.model.Event;
 import ru.practicum.ewm.events.model.EventSort;
 import ru.practicum.ewm.events.model.EventState;
 import java.time.LocalDateTime;
@@ -46,6 +47,6 @@ public interface EventService {
 
     EventResponseDto createEvent(long userId, EventDto eventDto);
 
-    Map<Long, Integer> getConfirmedRequestsCount(Collection<Long> eventIds);
+    List<EventShortResponseDto> getStatsAndMapToShortResponseDtos(Collection<Event> events);
 
 }
