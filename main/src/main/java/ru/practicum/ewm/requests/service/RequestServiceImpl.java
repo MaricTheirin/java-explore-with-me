@@ -102,14 +102,14 @@ public class RequestServiceImpl implements RequestService {
                 .findByInitiator_IdAndId(userId, eventId)
                 .orElseThrow(() -> new NotFoundException(eventId));
 
-        int confirmedRequests = requestRepository.countByEvent_IdAndStatus(eventId, CONFIRMED);
-
-        if (confirmedRequests >= event.getParticipantLimit()) {
-            throw new EventParticipationLimitExceededException(event.getId());
-        }
-
         if (!event.isRequestModeration()) {
             throw new EventNotEditableException("Событие не требует модерации запросов на участие");
+        }
+
+        int confirmedRequests = requestRepository.countByEvent_IdAndStatus(eventId, CONFIRMED);
+
+        if (event.getParticipantLimit() == 0 || confirmedRequests >= event.getParticipantLimit()) {
+            throw new EventParticipationLimitExceededException(event.getId());
         }
 
         if (statusUpdateDto.getStatus() != CONFIRMED && statusUpdateDto.getStatus() != REJECTED) {
