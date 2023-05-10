@@ -44,7 +44,7 @@ public class EventServiceImpl implements EventService {
     private final StatisticClient statisticClient;
 
     @Value("${app.name}")
-    private String APPLICATION_NAME;
+    private String applicationName;
 
     @Override
     @Transactional(readOnly = true)
@@ -266,7 +266,7 @@ public class EventServiceImpl implements EventService {
 
     private void createHitToStatisticService(String ip, String url) {
         EndpointHitDto endpointHitDto = EndpointHitDto.builder()
-                .app(APPLICATION_NAME)
+                .app(applicationName)
                 .uri(url)
                 .ip(ip)
                 .timestamp(LocalDateTime.now())
