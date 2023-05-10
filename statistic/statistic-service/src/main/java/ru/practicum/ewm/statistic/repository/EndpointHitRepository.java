@@ -50,7 +50,7 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> 
     @Query(value =
             "SELECT new ru.practicum.ewm.statistic.model.EndpointStats(eh.app, eh.uri, count(distinct eh.ip)) " +
             "FROM EndpointHit AS eh " +
-            "WHERE eh.timestamp BETWEEN :start AND :end AND eh.uri IN (:uri)" +
+            "WHERE eh.timestamp BETWEEN :start AND :end AND eh.uri IN (:uri) " +
             "GROUP BY eh.uri, eh.app " +
             "ORDER BY 3 DESC"
     )
