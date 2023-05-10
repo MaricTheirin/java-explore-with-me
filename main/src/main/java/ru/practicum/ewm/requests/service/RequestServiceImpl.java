@@ -90,6 +90,7 @@ public class RequestServiceImpl implements RequestService {
                 .map(RequestDtoMapper::mapRequestToResponseDto)
                 .collect(Collectors.toList());
     }
+
     @Override
     @Transactional
     public RequestStatusUpdateResponseDto updateEventRequestStatus(
