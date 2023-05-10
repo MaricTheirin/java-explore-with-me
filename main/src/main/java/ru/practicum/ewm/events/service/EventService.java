@@ -1,8 +1,9 @@
 package ru.practicum.ewm.events.service;
 
-import ru.practicum.ewm.events.dto.EventDto;
+import ru.practicum.ewm.events.dto.EventCreateDto;
 import ru.practicum.ewm.events.dto.EventResponseDto;
 import ru.practicum.ewm.events.dto.EventShortResponseDto;
+import ru.practicum.ewm.events.dto.EventUpdateDto;
 import ru.practicum.ewm.events.model.Event;
 import ru.practicum.ewm.events.model.EventSort;
 import ru.practicum.ewm.events.model.EventState;
@@ -21,9 +22,9 @@ public interface EventService {
             int size
     );
 
-    EventResponseDto adminUpdateEvent(long eventId, EventDto eventDto);
+    EventResponseDto adminUpdateEvent(long eventId, EventUpdateDto eventDto);
 
-    EventResponseDto userUpdateEvent(long userId, long eventId, EventDto eventDto);
+    EventResponseDto userUpdateEvent(long userId, long eventId, EventUpdateDto eventDto);
 
     List<EventResponseDto> getEvents(
             String text,
@@ -45,7 +46,7 @@ public interface EventService {
 
     EventResponseDto getEvent(long userId, long eventId);
 
-    EventResponseDto createEvent(long userId, EventDto eventDto);
+    EventResponseDto createEvent(long userId, EventCreateDto eventDto);
 
     List<EventShortResponseDto> getStatsAndMapToShortResponseDtos(Collection<Event> events);
 

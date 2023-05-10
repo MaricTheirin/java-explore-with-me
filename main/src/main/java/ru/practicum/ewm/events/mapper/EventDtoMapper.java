@@ -4,9 +4,10 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.practicum.ewm.categories.model.Category;
-import ru.practicum.ewm.events.dto.EventDto;
+import ru.practicum.ewm.events.dto.EventCreateDto;
 import ru.practicum.ewm.events.dto.EventResponseDto;
 import ru.practicum.ewm.events.dto.EventShortResponseDto;
+import ru.practicum.ewm.events.dto.EventUpdateDto;
 import ru.practicum.ewm.events.model.Event;
 import ru.practicum.ewm.events.model.EventLocation;
 import ru.practicum.ewm.events.model.EventState;
@@ -22,7 +23,26 @@ import static ru.practicum.ewm.users.mapper.UserDtoMapper.mapUserToShortResponse
 @Slf4j
 public class EventDtoMapper extends Mapper {
 
-    public static Event mapDtoToEvent(EventDto eventDto, User initiator, Category category, EventLocation location) {
+    public static Event mapDtoToEvent(EventCreateDto eventDto, User initiator, Category category, EventLocation location) {
+        Event mappedEvent = Event.builder()
+                .title(eventDto.getTitle())
+                .annotation(eventDto.getAnnotation())
+                .category(category)
+                .description(eventDto.getDescription())
+                .eventDate(eventDto.getEventDate())
+                .location(location)
+                .initiator(initiator)
+                .paid(eventDto.isPaid())
+                .participantLimit(eventDto.getParticipantLimit())
+                .requestModeration(eventDto.isRequestModeration())
+                .state(EventState.PENDING)
+                .build();
+
+        log.trace(DEFAULT_MESSAGE, eventDto, mappedEvent);
+        return mappedEvent;
+    }
+
+    public static Event mapDtoToEvent(EventUpdateDto eventDto, User initiator, Category category, EventLocation location) {
         Event mappedEvent = Event.builder()
                 .title(eventDto.getTitle())
                 .annotation(eventDto.getAnnotation())

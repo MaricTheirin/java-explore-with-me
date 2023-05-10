@@ -64,7 +64,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventResponseDto adminUpdateEvent(long eventId, EventDto eventDto) {
+    public EventResponseDto adminUpdateEvent(long eventId, EventUpdateDto eventDto) {
         Event savedEvent = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(eventId));
         checkBeforeAdminUpdate(savedEvent, eventDto);
         return updateEvent(savedEvent, eventDto);
@@ -72,7 +72,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventResponseDto userUpdateEvent(long userId, long eventId, EventDto eventDto) {
+    public EventResponseDto userUpdateEvent(long userId, long eventId, EventUpdateDto eventDto) {
         Event savedEvent = eventRepository
                 .findByInitiator_IdAndId(userId, eventId).orElseThrow(() -> new NotFoundException(eventId));
         checkBeforeUserUpdate(savedEvent, eventDto);
@@ -131,7 +131,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventResponseDto createEvent(long userId, EventDto eventDto) {
+    public EventResponseDto createEvent(long userId, EventCreateDto eventDto) {
         long categoryId = eventDto.getCategory();
         User initiator = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(userId));
         Category eventCategory =
@@ -144,7 +144,7 @@ public class EventServiceImpl implements EventService {
         return mapEventToResponseDto(createdEvent, 0, 0L);
     }
 
-    private EventResponseDto updateEvent(Event savedEvent, EventDto eventDto) {
+    private EventResponseDto updateEvent(Event savedEvent, EventUpdateDto eventDto) {
 
         if (eventDto.getAnnotation() != null && !eventDto.getAnnotation().isBlank() && !eventDto.getAnnotation().equals(savedEvent.getAnnotation())) {
             log.debug("Аннотация события изменено с {} на {}", savedEvent.getAnnotation(), eventDto.getAnnotation());
@@ -159,7 +159,7 @@ public class EventServiceImpl implements EventService {
             savedEvent.setCategory(newCategory);
         }
 
-        if (eventDto.getDescription() != null && !eventDto.getDescription().isBlank() && !eventDto.getDescription().equals(savedEvent.getDescription())) {
+        if (eventDto.getDescription() != null && !eventDto.getDescription().isBlank()) {
             log.debug("Описание события изменено с {} на {}", savedEvent.getDescription(), eventDto.getDescription());
             savedEvent.setDescription(eventDto.getDescription());
         }
@@ -225,7 +225,7 @@ public class EventServiceImpl implements EventService {
         return getStatsAndMapToResponseDto(savedEvent);
     }
 
-    private void checkBeforeAdminUpdate(Event savedEvent, EventDto eventDto) {
+    private void checkBeforeAdminUpdate(Event savedEvent, EventUpdateDto eventDto) {
         if (eventDto.getEventDate() != null && LocalDateTime.now().plusHours(1).isAfter(eventDto.getEventDate())) {
             log.warn("Нельзя редактировать событие, которое начинается менее, чем через час");
             throw new EventNotEditableException("Событие недоступно для редактирования");
@@ -240,7 +240,7 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    private void checkBeforeUserUpdate(Event savedEvent, EventDto eventDto) {
+    private void checkBeforeUserUpdate(Event savedEvent, EventUpdateDto eventDto) {
         LocalDateTime minDate = LocalDateTime.now().plusHours(2);
         if (eventDto.getEventDate() != null && eventDto.getEventDate().isBefore(minDate)) {
             log.warn("Создание события, начинающегося {}, невозможно", eventDto.getEventDate());

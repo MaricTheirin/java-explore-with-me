@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.events.dto.EventDto;
 import ru.practicum.ewm.events.dto.EventResponseDto;
+import ru.practicum.ewm.events.dto.EventUpdateDto;
 import ru.practicum.ewm.events.model.EventState;
 import ru.practicum.ewm.events.service.EventService;
 import javax.validation.Valid;
@@ -43,7 +43,7 @@ public class EventAdminController {
     @PatchMapping("/{eventId}")
     public EventResponseDto adminUpdateEvent(
             @PathVariable @Positive long eventId,
-            @RequestBody @Valid EventDto eventDto
+            @RequestBody @Valid EventUpdateDto eventDto
     ) {
         log.info("Запрошено обновление события с id = {} на {}", eventId, eventDto);
         return eventService.adminUpdateEvent(eventId, eventDto);

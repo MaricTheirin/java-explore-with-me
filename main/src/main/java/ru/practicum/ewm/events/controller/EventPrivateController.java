@@ -5,13 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.events.dto.EventDto;
+import ru.practicum.ewm.events.dto.EventCreateDto;
 import ru.practicum.ewm.events.dto.EventResponseDto;
 import ru.practicum.ewm.events.dto.EventShortResponseDto;
+import ru.practicum.ewm.events.dto.EventUpdateDto;
 import ru.practicum.ewm.events.exception.EventValidationException;
 import ru.practicum.ewm.events.service.EventService;
-import ru.practicum.ewm.service.validation.Create;
-import ru.practicum.ewm.service.validation.Update;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
@@ -49,7 +48,7 @@ public class EventPrivateController {
     @ResponseStatus(HttpStatus.CREATED)
     public EventResponseDto createEvent(
             @PathVariable @Positive long userId,
-            @RequestBody @Validated(value = Create.class) EventDto eventDto
+            @RequestBody @Validated EventCreateDto eventDto
     ) {
         log.info("Пользователь с id = {} запросил создание события {}", userId, eventDto);
         checkEventDate(eventDto.getEventDate());
@@ -61,7 +60,7 @@ public class EventPrivateController {
     public EventResponseDto updateEvent(
             @PathVariable @Positive long userId,
             @PathVariable @Positive long eventId,
-            @RequestBody @Validated (value = Update.class) EventDto eventDto
+            @RequestBody @Validated EventUpdateDto eventDto
     ) {
         log.info("Пользователь с id = {} запросил обновление события с id = {} на {}", userId, eventId, eventDto);
         checkEventDate(eventDto.getEventDate());
