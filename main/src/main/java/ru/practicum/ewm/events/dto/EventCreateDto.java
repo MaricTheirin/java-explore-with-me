@@ -12,18 +12,21 @@ import static ru.practicum.ewm.service.Limit.limitString;
 @Data
 public class EventCreateDto {
 
+    @NotBlank
     @Length(min = 3, max = 500, message = "Длина должна быть в промежутке от 3 до 127 символов")
     private String annotation;
 
     @Positive
     private Long category;
 
+    @NotBlank
     @Length(min = 10, max = 2000, message = "Длина должна быть в промежутке от 10 до 127 символов")
     private String description;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
 
+    @NotNull
     @Valid
     private EventLocationDto location;
 
@@ -32,8 +35,9 @@ public class EventCreateDto {
     @PositiveOrZero
     private int participantLimit;
 
-    private boolean requestModeration;
+    private boolean requestModeration = true;
 
+    @NotBlank
     @Length(min = 3, max = 127, message = "Длина должна быть в промежутке от 3 до 127 символов")
     private String title;
 
