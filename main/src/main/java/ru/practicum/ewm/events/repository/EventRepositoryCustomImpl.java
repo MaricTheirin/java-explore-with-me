@@ -16,8 +16,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static ru.practicum.ewm.events.model.EventSort.EVENT_DATE;
-
 @Repository
 @Slf4j
 @RequiredArgsConstructor
@@ -46,8 +44,6 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
                 paid,
                 rangeStart,
                 rangeEnd,
-                onlyAvailable,
-                sort,
                 from,
                 size
         );
@@ -71,8 +67,6 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
                 null,
                 rangeStart,
                 rangeEnd,
-                false,
-                EVENT_DATE,
                 from,
                 size
         );
@@ -86,8 +80,6 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
             Boolean paid,
             LocalDateTime rangeStart,
             LocalDateTime rangeEnd,
-            Boolean onlyAvailable,
-            EventSort sort,
             int from,
             int size
     ) {
@@ -125,14 +117,9 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
             filters = filters.and(event.paid.eq(paid));
         }
 
-        if (onlyAvailable) {
-            filters = filters.and(event.participantLimit.gt(event.confirmedRequests));
-        }
-
         List<Event> events = queryFactory
                 .selectFrom(event)
                 .where(filters)
-                .orderBy(sort == EVENT_DATE ? event.eventDate.desc() : event.views.desc())
                 .offset(from)
                 .limit(size)
                 .fetch();

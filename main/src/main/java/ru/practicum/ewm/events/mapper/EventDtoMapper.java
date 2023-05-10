@@ -61,7 +61,7 @@ public class EventDtoMapper extends Mapper {
         return mappedEvent;
     }
 
-    public static EventResponseDto mapEventToResponseDto(Event event, int confirmedRequests, long views) {
+    public static EventResponseDto mapEventToResponseDto(Event event, long confirmedRequests, long views) {
         EventResponseDto mappedResponseDto = EventResponseDto.builder()
                 .id(event.getId())
                 .title(event.getTitle())
@@ -85,7 +85,7 @@ public class EventDtoMapper extends Mapper {
         return mappedResponseDto;
     }
 
-    public static EventShortResponseDto mapEventToShortResponseDto(Event event, int confirmedRequests, long views) {
+    public static EventShortResponseDto mapEventToShortResponseDto(Event event, long confirmedRequests, long views) {
         EventShortResponseDto mappedShortResponseDto = EventShortResponseDto.builder()
                 .id(event.getId())
                 .title(event.getTitle())

@@ -22,6 +22,7 @@ import ru.practicum.ewm.statistic.client.StatisticClient;
 import ru.practicum.ewm.statistic.dto.EndpointHitDto;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static ru.practicum.ewm.events.mapper.EventDtoMapper.*;
@@ -95,11 +96,22 @@ public class EventServiceImpl implements EventService {
             String url
     ) {
         createHitToStatisticService(ip, url);
+        Comparator<EventResponseDto> sortByDate = Comparator.comparing(EventResponseDto::getEventDate).reversed();
+        Comparator<EventResponseDto> sortByViews = Comparator.comparing(EventResponseDto::getViews).reversed();
+        Predicate<EventResponseDto> filterOnlyAvailable =
+                e -> e.getParticipantLimit() == 0 || e.getConfirmedRequests() < e.getParticipantLimit();
 
-        List<Event> foundEvents =
+        List<Event> events =
                 eventRepository.getEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
-        log.debug("Результат: {}", foundEvents);
-        return getStatsAndMapToResponseDtos(foundEvents);
+        log.trace("Результат запроса из репозитория: {}", events);
+
+        List<EventResponseDto> mappedEvents = getStatsAndMapToResponseDtos(events)
+                .stream()
+                .filter(onlyAvailable ? filterOnlyAvailable : y -> true)
+                .sorted(sort == EventSort.EVENT_DATE ? sortByDate : sortByViews)
+                .collect(Collectors.toList());
+        log.debug("Результат: {}", mappedEvents);
+        return mappedEvents;
     }
 
     @Override
@@ -278,33 +290,33 @@ public class EventServiceImpl implements EventService {
 
     private List<EventResponseDto> getStatsAndMapToResponseDtos(List<Event> events) {
         Collection<Long> eventIds = events.stream().map(Event::getId).collect(Collectors.toList());
-        Map<Long, Integer> confirmedRequests = getConfirmedRequestsCount(eventIds);
+        Map<Long, Long> confirmedRequests = getConfirmedRequestsCount(eventIds);
         Map<Long, Long> views = getEventsViewsCount(eventIds);
         return events
                 .stream()
                 .map(event -> mapEventToResponseDto(
                         event,
-                        confirmedRequests.getOrDefault(event.getId(), 0),
+                        confirmedRequests.getOrDefault(event.getId(), 0L),
                         views.getOrDefault(event.getId(), 0L))
                 ).collect(Collectors.toList());
     }
 
     public List<EventShortResponseDto> getStatsAndMapToShortResponseDtos(Collection<Event> events) {
         Collection<Long> eventIds = events.stream().map(Event::getId).collect(Collectors.toList());
-        Map<Long, Integer> confirmedRequests = getConfirmedRequestsCount(eventIds);
+        Map<Long, Long> confirmedRequests = getConfirmedRequestsCount(eventIds);
         Map<Long, Long> views = getEventsViewsCount(eventIds);
 
         return events
                 .stream()
                 .map(event -> mapEventToShortResponseDto(
                         event,
-                        confirmedRequests.getOrDefault(event.getId(), 0),
+                        confirmedRequests.getOrDefault(event.getId(), 0L),
                         views.getOrDefault(event.getId(), 0L))
                 ).collect(Collectors.toList());
     }
 
-    private Map<Long, Integer> getConfirmedRequestsCount(Collection<Long> eventIds) {
-        Map<Long, Integer> confirmedRequestCounts = requestRepository
+    private Map<Long, Long> getConfirmedRequestsCount(Collection<Long> eventIds) {
+        Map<Long, Long> confirmedRequestCounts = requestRepository
                 .countAllByEvent_IdInAndStatusIs(eventIds, CONFIRMED)
                 .stream()
                 .collect(Collectors.toMap(ConfirmedRequestCount::getEventId, ConfirmedRequestCount::getConfirmed));

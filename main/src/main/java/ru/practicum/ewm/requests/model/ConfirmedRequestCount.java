@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class ConfirmedRequestCount {
 
-    private Long eventId;
-    private Integer confirmed;
+    private final Long eventId;
+    private final Long confirmed;
 
 }
