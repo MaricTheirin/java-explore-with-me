@@ -29,7 +29,7 @@ public interface EventService {
     List<EventResponseDto> getEvents(
             String text,
             Set<Long> categories,
-            boolean paid,
+            Boolean paid,
             LocalDateTime rangeStart,
             LocalDateTime rangeEnd,
             boolean onlyAvailable,

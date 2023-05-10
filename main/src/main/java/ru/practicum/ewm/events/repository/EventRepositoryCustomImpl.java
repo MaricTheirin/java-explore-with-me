@@ -28,7 +28,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
     public List<Event> getEvents(
             String text,
             Set<Long> categories,
-            boolean paid,
+            Boolean paid,
             LocalDateTime rangeStart,
             LocalDateTime rangeEnd,
             boolean onlyAvailable,
