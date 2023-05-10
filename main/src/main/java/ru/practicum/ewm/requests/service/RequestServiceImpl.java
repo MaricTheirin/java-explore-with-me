@@ -181,7 +181,9 @@ public class RequestServiceImpl implements RequestService {
             throw new EventNotAvailableForParticipationException("Нельзя участвовать в неопубликованном событии");
         }
 
-        if (event.getParticipantLimit() <= requestRepository.countByEvent_IdAndStatus(event.getId(), CONFIRMED)) {
+        if (event.getParticipantLimit() != 0 &&
+            event.getParticipantLimit() <= requestRepository.countByEvent_IdAndStatus(event.getId(), CONFIRMED)
+        ) {
             log.warn("Пользователь с id = {} пытается участвовать в заполненном событии с id = {}", userId, event.getId());
             throw new EventParticipationLimitExceededException(event.getId());
         }
