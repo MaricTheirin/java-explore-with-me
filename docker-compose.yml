@@ -29,9 +29,26 @@ services:
 
   ewm-db:
     image: postgres:14.7-alpine
+    volumes:
+      - /var/lib/postgresql/data/
+    container_name: MainServiceDB
+    ports:
+      - "6542:5432"
+    environment:
+      - POSTGRES_DB=main
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
 
   ewm-service:
     build: ./main
     container_name: MainService
     ports:
       - "8080:8080"
+    depends_on:
+      - ewm-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://MainServiceDB:5432/main
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - STATISTIC_SERVER_URL=http://StatisticService:9090
+      # - TZ=Europe/Moscow #For localhost only
