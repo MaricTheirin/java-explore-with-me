@@ -4,6 +4,8 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.practicum.ewm.categories.model.Category;
+import ru.practicum.ewm.comments.dto.CommentResponseDto;
+import ru.practicum.ewm.comments.mapper.CommentDtoMapper;
 import ru.practicum.ewm.events.dto.EventCreateDto;
 import ru.practicum.ewm.events.dto.EventResponseDto;
 import ru.practicum.ewm.events.dto.EventShortResponseDto;
@@ -13,6 +15,8 @@ import ru.practicum.ewm.events.model.EventLocation;
 import ru.practicum.ewm.events.model.EventState;
 import ru.practicum.ewm.service.mapper.Mapper;
 import ru.practicum.ewm.users.model.User;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static ru.practicum.ewm.categories.mapper.CategoryDtoMapper.mapCategoryToResponseDto;
 import static ru.practicum.ewm.events.mapper.EventLocationMapper.mapEventLocationToResponseDto;
@@ -61,7 +65,19 @@ public class EventDtoMapper extends Mapper {
         return mappedEvent;
     }
 
-    public static EventResponseDto mapEventToResponseDto(Event event, long confirmedRequests, long views) {
+    public static EventResponseDto mapEventToResponseDto(
+            Event event,
+            long confirmedRequests,
+            long views
+    ) {
+
+        List<CommentResponseDto> mappedComments = event.getComments() == null ?
+                Collections.emptyList() :
+                event.getComments().stream()
+                        .map(CommentDtoMapper::mapCommentToResponseDto)
+                        .sorted(Comparator.comparing(CommentResponseDto::getCreated))
+                        .collect(Collectors.toList());
+
         EventResponseDto mappedResponseDto = EventResponseDto.builder()
                 .id(event.getId())
                 .title(event.getTitle())
@@ -79,6 +95,7 @@ public class EventDtoMapper extends Mapper {
                 .state(event.getState())
                 .views(views)
                 .confirmedRequests(confirmedRequests)
+                .comments(mappedComments)
                 .build();
 
         log.trace(DEFAULT_MESSAGE, event, mappedResponseDto);
