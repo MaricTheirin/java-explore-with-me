@@ -84,7 +84,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"name\":\"test_user_2\",\r\n    \"email\":\"test_user_2@server.com\"\r\n}",
+          "raw": "{\r\n    \"name\":\"participator_1\",\r\n    \"email\":\"participator_1@server.com\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -133,7 +133,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"name\":\"test_user_3\",\r\n    \"email\":\"test_user_3@server.com\"\r\n}",
+          "raw": "{\r\n    \"name\":\"participator_2\",\r\n    \"email\":\"participator_2@server.com\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -605,10 +605,11 @@
               "    pm.expect(jsonData).to.have.property('text');\r",
               "    pm.expect(jsonData.text, '\"text\" must be \"Комментарий_пользователя_' + pm.variables.get('participator1Id') + '\"').to.eql('Комментарий_пользователя_'.concat(pm.variables.get('participator1Id')));\r",
               "});\r",
+              "\r",
               "pm.test(\"Test user 'author' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('author');\r",
-              "    pm.expect(jsonData.author, '\"author\" field must be \"test_user_' + pm.variables.get('participator1Id') + '\"').to.eql('test_user_'.concat(pm.variables.get('participator1Id')));  \r",
+              "    pm.expect(jsonData.author, '\"author\" field must be \"participator_1\"').to.eql('participator_1');  \r",
               "});"
             ],
             "type": "text/javascript"
@@ -682,10 +683,11 @@
               "    pm.expect(jsonData).to.have.property('text');\r",
               "    pm.expect(jsonData.text, '\"text\" must be \"Комментарий_пользователя_' + pm.variables.get('participator2Id') + '\"').to.eql('Комментарий_пользователя_'.concat(pm.variables.get('participator2Id')));\r",
               "});\r",
+              "\r",
               "pm.test(\"Test user 'author' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('author');\r",
-              "    pm.expect(jsonData.author, '\"author\" field must be \"test_user_' + pm.variables.get('participator2Id') + '\"').to.eql('test_user_'.concat(pm.variables.get('participator2Id')));  \r",
+              "    pm.expect(jsonData.author, '\"author\" field must be \"participator_2\"').to.eql('participator_2');  \r",
               "});"
             ],
             "type": "text/javascript"
@@ -814,7 +816,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"text\":\"UPD:Комментарий_пользователя_3\"\r\n}",
+          "raw": "{\r\n    \"text\":\"UPD:Комментарий_пользователя\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -865,10 +867,11 @@
               "    pm.expect(jsonData).to.have.property('text');\r",
               "    pm.expect(jsonData.text, '\"text\" must be \"UPD:Комментарий_пользователя_' + pm.variables.get('participator2Id') + '\"').to.eql('UPD:Комментарий_пользователя_' + pm.variables.get('participator2Id'));\r",
               "});\r",
+              "\r",
               "pm.test(\"Test user 'author' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('author');\r",
-              "    pm.expect(jsonData.author, '\"author\" field must be \"test_user_' + pm.variables.get('participator2Id') + '\"').to.eql('test_user_' + pm.variables.get('participator2Id'));    \r",
+              "    pm.expect(jsonData.author, '\"author\" field must be \"participator_2\"').to.eql('participator_2');    \r",
               "});"
             ],
             "type": "text/javascript"
@@ -940,7 +943,7 @@
               "pm.test(\"Test user 'author' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('author');\r",
-              "    pm.expect(jsonData.author, '\"author\" field must be \"test_user_' + pm.variables.get('participator2Id') + '\"').to.eql('test_user_' + pm.variables.get('participator2Id'));    \r",
+              "    pm.expect(jsonData.author, '\"author\" field must be \"participator_2\"').to.eql('participator_2');    \r",
               "});"
             ],
             "type": "text/javascript"
@@ -1018,10 +1021,11 @@
               "    pm.expect(jsonData.comments[0]).to.have.property('text');\r",
               "    pm.expect(jsonData.comments[0].text, '\"text\" must be \"Комментарий_пользователя_' + pm.variables.get('participator1Id') + '\"').to.eql('Комментарий_пользователя_' + pm.variables.get('participator1Id'));\r",
               "});\r",
+              "\r",
               "pm.test(\"Test user 'author' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData.comments[0]).to.have.property('author');\r",
-              "    pm.expect(jsonData.comments[0].author, '\"author\" field must be \"test_user_' + pm.variables.get('participator1Id') + '\"').to.eql('test_user_' + pm.variables.get('participator1Id'));\r",
+              "    pm.expect(jsonData.comments[0].author, '\"author\" field must be \"participator_1\"').to.eql('participator_1');\r",
               "});"
             ],
             "type": "text/javascript"
@@ -1099,7 +1103,7 @@
               "pm.test(\"Test user 'author' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData[0]).to.have.property('author');\r",
-              "    pm.expect(jsonData[0].author, '\"author\" field must be \"test_user_' + pm.variables.get('participator1Id') + '\"').to.eql('test_user_' + pm.variables.get('participator1Id'));\r",
+              "    pm.expect(jsonData[0].author, '\"author\" field must be \"participator_1\"').to.eql('participator_1');\r",
               "});"
             ],
             "type": "text/javascript"
