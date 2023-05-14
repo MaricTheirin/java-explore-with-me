@@ -17,6 +17,7 @@
               "    pm.response.to.have.status(201);\r",
               "    pm.response.to.be.withBody;\r",
               "    pm.response.to.be.json;\r",
+              "    pm.environment.set(\"eventOwnerId\", pm.response.json().id);\r",
               "});"
             ],
             "type": "text/javascript"
@@ -65,6 +66,7 @@
               "    pm.response.to.have.status(201);\r",
               "    pm.response.to.be.withBody;\r",
               "    pm.response.to.be.json;\r",
+              "    pm.environment.set(\"participator1Id\", pm.response.json().id);\r",
               "});"
             ],
             "type": "text/javascript"
@@ -113,6 +115,7 @@
               "    pm.response.to.have.status(201);\r",
               "    pm.response.to.be.withBody;\r",
               "    pm.response.to.be.json;\r",
+              "    pm.environment.set(\"participator2Id\", pm.response.json().id);\r",
               "});"
             ],
             "type": "text/javascript"
@@ -161,6 +164,7 @@
               "    pm.response.to.have.status(201);\r",
               "    pm.response.to.be.withBody;\r",
               "    pm.response.to.be.json;\r",
+              "    pm.environment.set(\"categoryId\", pm.response.json().id);\r",
               "});"
             ],
             "type": "text/javascript"
@@ -209,6 +213,7 @@
               "    pm.response.to.have.status(201);\r",
               "    pm.response.to.be.withBody;\r",
               "    pm.response.to.be.json;\r",
+              "    pm.environment.set(\"eventId\", pm.response.json().id);\r",
               "});"
             ],
             "type": "text/javascript"
@@ -226,7 +231,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"annotation\":\"Аннотация\",\r\n    \"category\":\"1\",\r\n    \"description\":\"Описание события\",\r\n    \"eventDate\":\"2023-08-01 10:00:00\",\r\n    \"location\": {\r\n        \"lat\":\"0\",\r\n        \"lon\":\"0\"\r\n    },\r\n    \"paid\":\"false\",\r\n    \"participantLimit\":\"0\",\r\n    \"requestModeration\":\"false\",\r\n    \"title\":\"Наименование\"\r\n}",
+          "raw": "{\r\n    \"annotation\":\"Аннотация\",\r\n    \"category\":{{categoryId}},\r\n    \"description\":\"Описание события\",\r\n    \"eventDate\":\"2023-08-01 10:00:00\",\r\n    \"location\": {\r\n        \"lat\":\"0\",\r\n        \"lon\":\"0\"\r\n    },\r\n    \"paid\":\"false\",\r\n    \"participantLimit\":\"0\",\r\n    \"requestModeration\":\"false\",\r\n    \"title\":\"Наименование\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -234,13 +239,13 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/users/1/events",
+          "raw": "{{baseUrl}}/users/{{eventOwnerId}}/events",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "users",
-            "1",
+            "{{eventOwnerId}}",
             "events"
           ]
         }
@@ -283,14 +288,14 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/admin/events/1",
+          "raw": "{{baseUrl}}/admin/events/{{eventId}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "admin",
             "events",
-            "1"
+            "{{eventId}}"
           ]
         }
       },
@@ -337,13 +342,13 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/users/2/comments/1",
+          "raw": "{{baseUrl}}/users/{{participator1Id}}/comments/1",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "users",
-            "2",
+            "{{participator1Id}}",
             "comments",
             "1"
           ]
@@ -379,7 +384,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"text\":\"Комментарий_пользователя_1\"\r\n}",
+          "raw": "{\r\n    \"text\":\"Комментарий_пользователя_{{eventOwnerId}}\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -387,13 +392,13 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/users/1/comments?eventId=1",
+          "raw": "{{baseUrl}}/users/{{eventOwnerId}}/comments?eventId=1",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "users",
-            "1",
+            "{{eventOwnerId}}",
             "comments"
           ],
           "query": [
@@ -434,7 +439,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"text\":\"Комментарий_пользователя_1\"\r\n}",
+          "raw": "{\r\n    \"text\":\"Комментарий_пользователя_{{participator1Id}}\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -442,19 +447,19 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/users/2/comments?eventId=1",
+          "raw": "{{baseUrl}}/users/{{participator1Id}}/comments?eventId={{eventId}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "users",
-            "2",
+            "{{participator1Id}}",
             "comments"
           ],
           "query": [
             {
               "key": "eventId",
-              "value": "1"
+              "value": "{{eventId}}"
             }
           ]
         }
@@ -497,19 +502,19 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/users/2/requests?eventId=1",
+          "raw": "{{baseUrl}}/users/{{participator1Id}}/requests?eventId={{eventId}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "users",
-            "2",
+            "{{participator1Id}}",
             "requests"
           ],
           "query": [
             {
               "key": "eventId",
-              "value": "1"
+              "value": "{{eventId}}"
             }
           ]
         }
@@ -552,19 +557,19 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/users/3/requests?eventId=1",
+          "raw": "{{baseUrl}}/users/{{participator2Id}}/requests?eventId={{eventId}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "users",
-            "3",
+            "{{participator2Id}}",
             "requests"
           ],
           "query": [
             {
               "key": "eventId",
-              "value": "1"
+              "value": "{{eventId}}"
             }
           ]
         }
@@ -587,7 +592,7 @@
               "pm.test(\"Comment 'id' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('id');\r",
-              "    pm.expect(jsonData.id, '\"id\" must be 1').to.eql(1);\r",
+              "    pm.environment.set(\"comment1Id\", pm.response.json().id);\r",
               "});\r",
               "\r",
               "pm.test(\"Comment 'created' field\", function () {\r",
@@ -598,12 +603,12 @@
               "pm.test(\"Comment 'text' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('text');\r",
-              "    pm.expect(jsonData.text, '\"text\" must be \"Комментарий_пользователя_2\"').to.eql('Комментарий_пользователя_2');\r",
+              "    pm.expect(jsonData.text, '\"text\" must be \"Комментарий_пользователя_' + pm.variables.get('participator1Id') + '\"').to.eql('Комментарий_пользователя_'.concat(pm.variables.get('participator1Id')));\r",
               "});\r",
               "pm.test(\"Test user 'author' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('author');\r",
-              "    pm.expect(jsonData.author, '\"author\" field must be \"test_user_2\"').to.eql('test_user_2');    \r",
+              "    pm.expect(jsonData.author, '\"author\" field must be \"test_user_' + pm.variables.get('participator1Id') + '\"').to.eql('test_user_'.concat(pm.variables.get('participator1Id')));  \r",
               "});"
             ],
             "type": "text/javascript"
@@ -621,7 +626,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"text\":\"Комментарий_пользователя_2\"\r\n}",
+          "raw": "{\r\n    \"text\":\"Комментарий_пользователя_{{participator1Id}}\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -629,19 +634,19 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/users/2/comments?eventId=1",
+          "raw": "{{baseUrl}}/users/{{participator1Id}}/comments?eventId={{eventId}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "users",
-            "2",
+            "{{participator1Id}}",
             "comments"
           ],
           "query": [
             {
               "key": "eventId",
-              "value": "1"
+              "value": "{{eventId}}"
             }
           ]
         }
@@ -664,7 +669,7 @@
               "pm.test(\"Comment 'id' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('id');\r",
-              "    pm.expect(jsonData.id, '\"id\" must be 1').to.eql(2);\r",
+              "    pm.environment.set(\"comment2Id\", pm.response.json().id);\r",
               "});\r",
               "\r",
               "pm.test(\"Comment 'created' field\", function () {\r",
@@ -675,12 +680,12 @@
               "pm.test(\"Comment 'text' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('text');\r",
-              "    pm.expect(jsonData.text, '\"text\" must be \"Комментарий_пользователя_3\"').to.eql('Комментарий_пользователя_3');\r",
+              "    pm.expect(jsonData.text, '\"text\" must be \"Комментарий_пользователя_' + pm.variables.get('participator2Id') + '\"').to.eql('Комментарий_пользователя_'.concat(pm.variables.get('participator2Id')));\r",
               "});\r",
               "pm.test(\"Test user 'author' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('author');\r",
-              "    pm.expect(jsonData.author, '\"author\" field must be \"test_user_3\"').to.eql('test_user_3');    \r",
+              "    pm.expect(jsonData.author, '\"author\" field must be \"test_user_' + pm.variables.get('participator2Id') + '\"').to.eql('test_user_'.concat(pm.variables.get('participator2Id')));  \r",
               "});"
             ],
             "type": "text/javascript"
@@ -698,7 +703,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"text\":\"Комментарий_пользователя_3\"\r\n}",
+          "raw": "{\r\n    \"text\":\"Комментарий_пользователя_{{participator2Id}}\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -706,19 +711,19 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/users/3/comments?eventId=1",
+          "raw": "{{baseUrl}}/users/{{participator2Id}}/comments?eventId={{eventId}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "users",
-            "3",
+            "{{participator2Id}}",
             "comments"
           ],
           "query": [
             {
               "key": "eventId",
-              "value": "1"
+              "value": "{{eventId}}"
             }
           ]
         }
@@ -753,7 +758,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"text\":\"Комментарий_пользователя_1\"\r\n}",
+          "raw": "{\r\n    \"text\":\"Комментарий_пользователя\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -761,19 +766,19 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/users/2/comments?eventId=1",
+          "raw": "{{baseUrl}}/users/{{participator1Id}}/comments?eventId={{eventId}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "users",
-            "2",
+            "{{participator1Id}}",
             "comments"
           ],
           "query": [
             {
               "key": "eventId",
-              "value": "1"
+              "value": "{{eventId}}"
             }
           ]
         }
@@ -817,15 +822,15 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/users/2/comments/2",
+          "raw": "{{baseUrl}}/users/{{participator1Id}}/comments/{{comment2Id}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "users",
-            "2",
+            "{{participator1Id}}",
             "comments",
-            "2"
+            "{{comment2Id}}"
           ]
         }
       },
@@ -847,7 +852,7 @@
               "pm.test(\"Comment 'id' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('id');\r",
-              "    pm.expect(jsonData.id, '\"id\" must be 1').to.eql(2);\r",
+              "    pm.expect(jsonData.id, '\"id\" must be ' + pm.variables.get('comment2Id')).to.eql(pm.variables.get('comment2Id'));\r",
               "});\r",
               "\r",
               "pm.test(\"Comment 'created' field\", function () {\r",
@@ -858,12 +863,12 @@
               "pm.test(\"Comment 'text' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('text');\r",
-              "    pm.expect(jsonData.text, '\"text\" must be \"UPD:Комментарий_пользователя_3\"').to.eql('UPD:Комментарий_пользователя_3');\r",
+              "    pm.expect(jsonData.text, '\"text\" must be \"UPD:Комментарий_пользователя_' + pm.variables.get('participator2Id') + '\"').to.eql('UPD:Комментарий_пользователя_' + pm.variables.get('participator2Id'));\r",
               "});\r",
               "pm.test(\"Test user 'author' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('author');\r",
-              "    pm.expect(jsonData.author, '\"author\" field must be \"test_user_3\"').to.eql('test_user_3');    \r",
+              "    pm.expect(jsonData.author, '\"author\" field must be \"test_user_' + pm.variables.get('participator2Id') + '\"').to.eql('test_user_' + pm.variables.get('participator2Id'));    \r",
               "});"
             ],
             "type": "text/javascript"
@@ -881,7 +886,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"text\":\"UPD:Комментарий_пользователя_3\"\r\n}",
+          "raw": "{\r\n    \"text\":\"UPD:Комментарий_пользователя_{{participator2Id}}\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -889,15 +894,15 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/users/3/comments/2",
+          "raw": "{{baseUrl}}/users/{{participator2Id}}/comments/{{comment2Id}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "users",
-            "3",
+            "{{participator2Id}}",
             "comments",
-            "2"
+            "{{comment2Id}}"
           ]
         }
       },
@@ -919,7 +924,7 @@
               "pm.test(\"Comment 'id' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('id');\r",
-              "    pm.expect(jsonData.id, '\"id\" must be 2').to.eql(2);\r",
+              "    pm.expect(jsonData.id, '\"id\" must be ' + pm.variables.get('comment2Id')).to.eql(pm.variables.get('comment2Id'));\r",
               "});\r",
               "\r",
               "pm.test(\"Comment 'created' field\", function () {\r",
@@ -930,12 +935,12 @@
               "pm.test(\"Comment 'text' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('text');\r",
-              "    pm.expect(jsonData.text, '\"text\" must be \"UPD:Комментарий_пользователя_2\"').to.eql('UPD:Комментарий_пользователя_3');\r",
+              "    pm.expect(jsonData.text, '\"text\" must be \"UPD:Комментарий_пользователя_' + pm.variables.get('participator2Id') + '\"').to.eql('UPD:Комментарий_пользователя_' + pm.variables.get('participator2Id'));\r",
               "});\r",
               "pm.test(\"Test user 'author' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('author');\r",
-              "    pm.expect(jsonData.author, '\"author\" field must be \"test_user_3\"').to.eql('test_user_3');    \r",
+              "    pm.expect(jsonData.author, '\"author\" field must be \"test_user_' + pm.variables.get('participator2Id') + '\"').to.eql('test_user_' + pm.variables.get('participator2Id'));    \r",
               "});"
             ],
             "type": "text/javascript"
@@ -964,15 +969,15 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/users/3/comments/2",
+          "raw": "{{baseUrl}}/users/{{participator2Id}}/comments/{{comment2Id}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "users",
-            "3",
+            "{{participator2Id}}",
             "comments",
-            "2"
+            "{{comment2Id}}"
           ]
         }
       },
@@ -1000,7 +1005,7 @@
               "pm.test(\"Comment 'id' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData.comments[0]).to.have.property('id');\r",
-              "    pm.expect(jsonData.comments[0].id, '\"id\" must be 1').to.eql(1);\r",
+              "    pm.expect(jsonData.comments[0].id, '\"id\" must be ' + pm.variables.get('comment1Id')).to.eql(pm.variables.get('comment1Id'));\r",
               "});\r",
               "\r",
               "pm.test(\"Comment 'created' field\", function () {\r",
@@ -1011,12 +1016,12 @@
               "pm.test(\"Comment 'text' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData.comments[0]).to.have.property('text');\r",
-              "    pm.expect(jsonData.comments[0].text, '\"text\" must be \"Комментарий_пользователя_2\"').to.eql('Комментарий_пользователя_2');\r",
+              "    pm.expect(jsonData.comments[0].text, '\"text\" must be \"Комментарий_пользователя_' + pm.variables.get('participator1Id') + '\"').to.eql('Комментарий_пользователя_' + pm.variables.get('participator1Id'));\r",
               "});\r",
               "pm.test(\"Test user 'author' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData.comments[0]).to.have.property('author');\r",
-              "    pm.expect(jsonData.comments[0].author, '\"author\" field must be \"test_user_2\"').to.eql('test_user_2');\r",
+              "    pm.expect(jsonData.comments[0].author, '\"author\" field must be \"test_user_' + pm.variables.get('participator1Id') + '\"').to.eql('test_user_' + pm.variables.get('participator1Id'));\r",
               "});"
             ],
             "type": "text/javascript"
@@ -1045,13 +1050,13 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/events/1",
+          "raw": "{{baseUrl}}/events/{{eventId}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "events",
-            "1"
+            "{{eventId}}"
           ]
         }
       },
@@ -1072,30 +1077,29 @@
               "\r",
               "pm.test(\"Test list comments response\", function () {\r",
               "    var jsonData = pm.response.json();\r",
-              "    pm.expect(jsonData).to.have.property('comments');\r",
-              "    pm.expect(jsonData.comments.length, 'List length must be 2').to.eql(2);\r",
+              "    pm.expect(jsonData.length, 'List length must be 2').to.eql(2);\r",
               "});\r",
               "\r",
               "pm.test(\"Comment 'id' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
-              "    pm.expect(jsonData.comments[0]).to.have.property('id');\r",
-              "    pm.expect(jsonData.comments[0].id, '\"id\" must be 1').to.eql(1);\r",
+              "    pm.expect(jsonData[0]).to.have.property('id');\r",
+              "    pm.expect(jsonData[0].id, '\"id\" must be ' + pm.variables.get('comment1Id')).to.eql(pm.variables.get('comment1Id'));\r",
               "});\r",
               "\r",
               "pm.test(\"Comment 'created' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
-              "    pm.expect(jsonData.comments[0]).to.have.property('created');\r",
+              "    pm.expect(jsonData[0]).to.have.property('created');\r",
               "});\r",
               "\r",
               "pm.test(\"Comment 'text' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
-              "    pm.expect(jsonData.comments[0]).to.have.property('text');\r",
-              "    pm.expect(jsonData.comments[0].text, '\"text\" must be \"Комментарий_пользователя_2\"').to.eql('Комментарий_пользователя_2');\r",
+              "    pm.expect(jsonData[0]).to.have.property('text');\r",
+              "    pm.expect(jsonData[0].text, '\"text\" must be \"Комментарий_пользователя_' + pm.variables.get('participator1Id') + '\"').to.eql('Комментарий_пользователя_' + pm.variables.get('participator1Id'));\r",
               "});\r",
               "pm.test(\"Test user 'author' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
-              "    pm.expect(jsonData.comments[0]).to.have.property('author');\r",
-              "    pm.expect(jsonData.comments[0].author, '\"author\" field must be \"test_user_2\"').to.eql('test_user_2');\r",
+              "    pm.expect(jsonData[0]).to.have.property('author');\r",
+              "    pm.expect(jsonData[0].author, '\"author\" field must be \"test_user_' + pm.variables.get('participator1Id') + '\"').to.eql('test_user_' + pm.variables.get('participator1Id'));\r",
               "});"
             ],
             "type": "text/javascript"
@@ -1124,13 +1128,14 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/events/1",
+          "raw": "{{baseUrl}}/events/{{eventId}}/comments",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "events",
-            "1"
+            "{{eventId}}",
+            "comments"
           ]
         }
       },
@@ -1172,7 +1177,7 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/users/999/comments/1",
+          "raw": "{{baseUrl}}/users/999/comments/{{comment1Id}}",
           "host": [
             "{{baseUrl}}"
           ],
@@ -1180,7 +1185,7 @@
             "users",
             "999",
             "comments",
-            "1"
+            "{{comment1Id}}"
           ]
         }
       },
@@ -1222,13 +1227,13 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/users/1/comments/999",
+          "raw": "{{baseUrl}}/users/{{eventOwnerId}}/comments/999",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "users",
-            "1",
+            "{{eventOwnerId}}",
             "comments",
             "999"
           ]
@@ -1270,15 +1275,15 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/users/3/comments/2",
+          "raw": "{{baseUrl}}/users/{{participator2Id}}/comments/{{comment2Id}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "users",
-            "3",
+            "{{participator2Id}}",
             "comments",
-            "2"
+            "{{comment2Id}}"
           ]
         }
       },
@@ -1318,14 +1323,14 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/admin/comments/1",
+          "raw": "{{baseUrl}}/admin/comments/{{comment1Id}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "admin",
             "comments",
-            "1"
+            "{{comment1Id}}"
           ]
         }
       },
@@ -1376,13 +1381,13 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/events/1",
+          "raw": "{{baseUrl}}/events/{{eventId}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "events",
-            "1"
+            "{{eventId}}"
           ]
         }
       },
