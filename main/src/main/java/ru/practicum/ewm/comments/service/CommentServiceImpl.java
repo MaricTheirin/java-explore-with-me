@@ -127,4 +127,10 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
+    private void checkBeforeUpdate(Comment commentToUpdate) {
+        if (commentToUpdate.getCreated().isAfter(LocalDateTime.now().plusHours(1))) {
+            throw new NotAvailableToCommentException("Комментарий доступен для обновления в течение часа после создания");
+        }
+    }
+
 }
