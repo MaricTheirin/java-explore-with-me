@@ -392,7 +392,7 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/users/{{eventOwnerId}}/comments?eventId=1",
+          "raw": "{{baseUrl}}/users/{{eventOwnerId}}/comments?eventId={{eventId}}",
           "host": [
             "{{baseUrl}}"
           ],
@@ -404,7 +404,7 @@
           "query": [
             {
               "key": "eventId",
-              "value": "1"
+              "value": "{{eventId}}"
             }
           ]
         }
@@ -606,7 +606,19 @@
               "    pm.expect(jsonData.text, '\"text\" must be \"Комментарий_пользователя_' + pm.variables.get('participator1Id') + '\"').to.eql('Комментарий_пользователя_'.concat(pm.variables.get('participator1Id')));\r",
               "});\r",
               "\r",
-              "pm.test(\"Test user 'author' field\", function () {\r",
+              "pm.test(\"Comment 'isUpdated' field\", function () {\r",
+              "    var jsonData = pm.response.json();\r",
+              "    pm.expect(jsonData).to.have.property('text');\r",
+              "    pm.expect(jsonData.isUpdated, '\"isUpdated\" must be \"false\"').to.eql(false);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Comment 'updated' field\", function () {\r",
+              "    var jsonData = pm.response.json();\r",
+              "    pm.expect(jsonData).to.have.property('updated');\r",
+              "    pm.expect(jsonData.updated, '\"updated\" must equals \"created\" field').to.eql(jsonData.created);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Comment 'author' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('author');\r",
               "    pm.expect(jsonData.author, '\"author\" field must be \"participator_1\"').to.eql('participator_1');  \r",
@@ -684,7 +696,19 @@
               "    pm.expect(jsonData.text, '\"text\" must be \"Комментарий_пользователя_' + pm.variables.get('participator2Id') + '\"').to.eql('Комментарий_пользователя_'.concat(pm.variables.get('participator2Id')));\r",
               "});\r",
               "\r",
-              "pm.test(\"Test user 'author' field\", function () {\r",
+              "pm.test(\"Comment 'isUpdated' field\", function () {\r",
+              "    var jsonData = pm.response.json();\r",
+              "    pm.expect(jsonData).to.have.property('text');\r",
+              "    pm.expect(jsonData.isUpdated, '\"isUpdated\" must be \"false\"').to.eql(false);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Comment 'updated' field\", function () {\r",
+              "    var jsonData = pm.response.json();\r",
+              "    pm.expect(jsonData).to.have.property('updated');\r",
+              "    pm.expect(jsonData.updated, '\"updated\" must equals \"created\" field').to.eql(jsonData.created);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Comment 'author' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('author');\r",
               "    pm.expect(jsonData.author, '\"author\" field must be \"participator_2\"').to.eql('participator_2');  \r",
@@ -865,14 +889,34 @@
               "pm.test(\"Comment 'text' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('text');\r",
-              "    pm.expect(jsonData.text, '\"text\" must be \"UPD:Комментарий_пользователя_' + pm.variables.get('participator2Id') + '\"').to.eql('UPD:Комментарий_пользователя_' + pm.variables.get('participator2Id'));\r",
+              "    pm.expect(jsonData.text, '\"text\" must be \"UPD: Комментарий_пользователя_' + pm.variables.get('participator2Id') + '\"').to.eql('UPD: Комментарий_пользователя_' + pm.variables.get('participator2Id'));\r",
               "});\r",
               "\r",
-              "pm.test(\"Test user 'author' field\", function () {\r",
+              "pm.test(\"Comment 'isUpdated' field\", function () {\r",
+              "    var jsonData = pm.response.json();\r",
+              "    pm.expect(jsonData).to.have.property('text');\r",
+              "    pm.expect(jsonData.isUpdated, '\"isUpdated\" must be \"true\"').to.eql(true);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Comment 'updated' field\", function () {\r",
+              "    var jsonData = pm.response.json();\r",
+              "    pm.expect(jsonData).to.have.property('updated');\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Comment 'author' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('author');\r",
-              "    pm.expect(jsonData.author, '\"author\" field must be \"participator_2\"').to.eql('participator_2');    \r",
+              "    pm.expect(jsonData.author, '\"author\" field must be \"participator_2\"').to.eql('participator_2');  \r",
               "});"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
             ],
             "type": "text/javascript"
           }
@@ -889,7 +933,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"text\":\"UPD:Комментарий_пользователя_{{participator2Id}}\"\r\n}",
+          "raw": "{\r\n    \"text\":\"UPD: Комментарий_пользователя_{{participator2Id}}\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -938,13 +982,36 @@
               "pm.test(\"Comment 'text' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('text');\r",
-              "    pm.expect(jsonData.text, '\"text\" must be \"UPD:Комментарий_пользователя_' + pm.variables.get('participator2Id') + '\"').to.eql('UPD:Комментарий_пользователя_' + pm.variables.get('participator2Id'));\r",
+              "    pm.expect(jsonData.text, '\"text\" must be \"UPD: Комментарий_пользователя_' + pm.variables.get('participator2Id') + '\"').to.eql('UPD: Комментарий_пользователя_' + pm.variables.get('participator2Id'));\r",
               "});\r",
-              "pm.test(\"Test user 'author' field\", function () {\r",
+              "\r",
+              "pm.test(\"Comment 'isUpdated' field\", function () {\r",
+              "    var jsonData = pm.response.json();\r",
+              "    pm.expect(jsonData).to.have.property('text');\r",
+              "    pm.expect(jsonData.isUpdated, '\"isUpdated\" must be \"true\"').to.eql(true);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Comment 'updated' field\", function () {\r",
+              "    var jsonData = pm.response.json();\r",
+              "    pm.expect(jsonData).to.have.property('updated');\r",
+              "    pm.expect(Date.parse(jsonData.updated), '\"updated\" must be greater than \"created\" field').to.be.above(Date.parse(jsonData.created));\r",
+              "\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Comment 'author' field\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('author');\r",
               "    pm.expect(jsonData.author, '\"author\" field must be \"participator_2\"').to.eql('participator_2');    \r",
               "});"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "setTimeout(function(){}, [1000]);"
             ],
             "type": "text/javascript"
           }
@@ -987,7 +1054,7 @@
       "response": []
     },
     {
-      "name": "Event get with sorted comments",
+      "name": "Event get with counted comments",
       "event": [
         {
           "listen": "test",
@@ -999,34 +1066,12 @@
               "    pm.response.to.be.json;\r",
               "});\r",
               "\r",
-              "pm.test(\"Test list comments response\", function () {\r",
+              "pm.test(\"Comments must be 2\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('comments');\r",
-              "    pm.expect(jsonData.comments.length, 'List length must be 2').to.eql(2);\r",
+              "    pm.expect(jsonData.comments, 'Must be 2 comments').to.eql(2);\r",
               "});\r",
-              "\r",
-              "pm.test(\"Comment 'id' field\", function () {\r",
-              "    var jsonData = pm.response.json();\r",
-              "    pm.expect(jsonData.comments[0]).to.have.property('id');\r",
-              "    pm.expect(jsonData.comments[0].id, '\"id\" must be ' + pm.variables.get('comment1Id')).to.eql(pm.variables.get('comment1Id'));\r",
-              "});\r",
-              "\r",
-              "pm.test(\"Comment 'created' field\", function () {\r",
-              "    var jsonData = pm.response.json();\r",
-              "    pm.expect(jsonData.comments[0]).to.have.property('created');\r",
-              "});\r",
-              "\r",
-              "pm.test(\"Comment 'text' field\", function () {\r",
-              "    var jsonData = pm.response.json();\r",
-              "    pm.expect(jsonData.comments[0]).to.have.property('text');\r",
-              "    pm.expect(jsonData.comments[0].text, '\"text\" must be \"Комментарий_пользователя_' + pm.variables.get('participator1Id') + '\"').to.eql('Комментарий_пользователя_' + pm.variables.get('participator1Id'));\r",
-              "});\r",
-              "\r",
-              "pm.test(\"Test user 'author' field\", function () {\r",
-              "    var jsonData = pm.response.json();\r",
-              "    pm.expect(jsonData.comments[0]).to.have.property('author');\r",
-              "    pm.expect(jsonData.comments[0].author, '\"author\" field must be \"participator_1\"').to.eql('participator_1');\r",
-              "});"
+              ""
             ],
             "type": "text/javascript"
           }
@@ -1353,10 +1398,10 @@
               "    pm.response.to.be.json;\r",
               "});\r",
               "\r",
-              "pm.test(\"Test list comments response\", function () {\r",
+              "pm.test(\"Test comments value\", function () {\r",
               "    var jsonData = pm.response.json();\r",
               "    pm.expect(jsonData).to.have.property('comments');\r",
-              "    pm.expect(jsonData.comments.length, 'List length must be 0').to.eql(0);\r",
+              "    pm.expect(jsonData.comments, 'Comments must be 0').to.eql(0);\r",
               "});"
             ],
             "type": "text/javascript"
