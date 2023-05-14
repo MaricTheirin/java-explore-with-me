@@ -3,7 +3,6 @@ package ru.practicum.ewm.comments.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.comments.dto.CommentDto;
@@ -107,7 +106,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private void checkBeforeCreate(User user, Event event) {
-        if(user.getId() == event.getInitiator().getId()) {
+        if (user.getId() == event.getInitiator().getId()) {
             throw new NotAvailableToCommentException("Нельзя комментировать своё событие");
         }
         if (!requestRepository.existsByRequester_IdAndEvent_Id(user.getId(), event.getId())) {
