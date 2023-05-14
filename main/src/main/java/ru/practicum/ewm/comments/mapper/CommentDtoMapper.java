@@ -19,18 +19,22 @@ public class CommentDtoMapper extends Mapper {
                 .event(event)
                 .user(user)
                 .text(commentDto.getText())
+                .isUpdated(false)
                 .build();
         log.trace(DEFAULT_MESSAGE, commentDto, mappedComment);
         return mappedComment;
     }
 
     public static CommentResponseDto mapCommentToResponseDto(Comment comment) {
-        CommentResponseDto mappedComment = new CommentResponseDto(
-                comment.getId(),
-                comment.getCreated(),
-                comment.getText(),
-                comment.getUser().getName()
-        );
+        CommentResponseDto mappedComment = CommentResponseDto.builder()
+                .id(comment.getId())
+                .created(comment.getCreated())
+                .isUpdated(comment.getIsUpdated())
+                .updated(comment.getUpdated())
+                .text(comment.getText())
+                .author(comment.getUser().getName())
+                .build();
+
         log.trace(DEFAULT_MESSAGE, comment, mappedComment);
         return mappedComment;
     }

@@ -6,11 +6,9 @@ import lombok.ToString;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 import ru.practicum.ewm.categories.dto.CategoryResponseDto;
-import ru.practicum.ewm.comments.dto.CommentResponseDto;
 import ru.practicum.ewm.events.model.EventState;
 import ru.practicum.ewm.users.dto.UserResponseDto;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static ru.practicum.ewm.service.Limit.limitString;
 
@@ -38,7 +36,7 @@ public class EventResponseDto {
     EventState state;
     long views;
     long confirmedRequests;
-    List<CommentResponseDto> comments;
+    long comments;
 
     @ToString.Include(name = "annotation")
     private String getLimitedAnnotation() {

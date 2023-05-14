@@ -4,12 +4,9 @@ import jdk.jfr.Timestamp;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import ru.practicum.ewm.categories.model.Category;
-import ru.practicum.ewm.comments.model.Comment;
 import ru.practicum.ewm.users.model.User;
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import static ru.practicum.ewm.service.Limit.limitString;
 
@@ -75,11 +72,6 @@ public class Event {
     @Enumerated
     @Column
     private EventState state;
-
-    @ToString.Exclude
-    @OneToMany(orphanRemoval = true)
-    @JoinColumn(name = "event_id")
-    private List<Comment> comments = new ArrayList<>();
 
     @ToString.Include(name = "annotation")
     private String getLimitedAnnotation() {

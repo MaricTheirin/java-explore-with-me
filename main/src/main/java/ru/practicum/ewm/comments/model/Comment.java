@@ -2,6 +2,7 @@ package ru.practicum.ewm.comments.model;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import ru.practicum.ewm.events.model.Event;
 import ru.practicum.ewm.users.model.User;
 import javax.persistence.*;
@@ -38,5 +39,12 @@ public class Comment {
     @CreationTimestamp
     @Column
     private LocalDateTime created;
+
+    @Column(name = "is_updated")
+    Boolean isUpdated;
+
+    @UpdateTimestamp
+    @Column
+    private LocalDateTime updated;
 
 }

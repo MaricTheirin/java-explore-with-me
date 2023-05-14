@@ -53,8 +53,11 @@ public class CommentServiceImpl implements CommentService {
         Comment savedComment = commentRepository
                 .findByIdAndUser_Id(commentId, userId)
                 .orElseThrow(() -> new NotFoundException(commentId));
+        checkBeforeUpdate(savedComment);
+
         log.debug("Текст комментария изменён с {} на {}", savedComment.getText(), commentDto.getText());
         savedComment.setText(commentDto.getText());
+        savedComment.setIsUpdated(true);
         return mapCommentToResponseDto(savedComment);
     }
 

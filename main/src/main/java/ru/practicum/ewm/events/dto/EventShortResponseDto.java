@@ -23,5 +23,6 @@ public class EventShortResponseDto {
     boolean paid;
     long views;
     long confirmedRequests;
+    long comments;
 
 }
