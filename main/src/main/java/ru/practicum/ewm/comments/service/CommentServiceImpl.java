@@ -102,6 +102,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentResponseDto> getEventComments(Long eventId, int from, int size) {
+        if (!eventRepository.existsByIdAndState(eventId, EventState.PUBLISHED)) {
+            throw new NotAvailableToCommentException("Опубликованного события с id = " + eventId + " не существует");
+        }
+
         List<Comment> eventComments =
                 commentRepository.findByEvent_IdOrderByCreatedAsc(eventId, PageRequest.of(from, size));
         log.debug("Найдены комментарии: {}", eventComments);
