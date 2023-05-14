@@ -2,6 +2,7 @@ package ru.practicum.ewm.comments.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.comments.dto.CommentResponseDto;
 import ru.practicum.ewm.comments.service.CommentService;
@@ -13,6 +14,7 @@ import java.util.List;
 @RequestMapping
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class CommentPublicController {
 
     private final CommentService commentService;
