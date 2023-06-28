@@ -36,6 +36,7 @@ public class EventResponseDto {
     EventState state;
     long views;
     long confirmedRequests;
+    long comments;
 
     @ToString.Include(name = "annotation")
     private String getLimitedAnnotation() {

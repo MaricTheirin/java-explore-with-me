@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.categories.model.Category;
 import ru.practicum.ewm.categories.repository.CategoryRepository;
+import ru.practicum.ewm.comments.model.CommentsCount;
+import ru.practicum.ewm.comments.repository.CommentRepository;
 import ru.practicum.ewm.events.dto.*;
 import ru.practicum.ewm.events.exception.*;
 import ru.practicum.ewm.events.model.*;
@@ -38,6 +40,7 @@ public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
     private final RequestRepository requestRepository;
+    private final CommentRepository commentRepository;
     private final EventLocationRepository eventLocationRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
@@ -153,7 +156,7 @@ public class EventServiceImpl implements EventService {
 
         Event createdEvent = eventRepository.save(mapDtoToEvent(eventDto, initiator, eventCategory, eventLocation));
         log.debug("Создано событие: {}", createdEvent);
-        return mapEventToResponseDto(createdEvent, 0, 0L);
+        return mapEventToResponseDto(createdEvent, 0, 0L, 0L);
     }
 
     private EventResponseDto updateEvent(Event savedEvent, EventUpdateDto eventDto) {
@@ -284,20 +287,24 @@ public class EventServiceImpl implements EventService {
         return mapEventToResponseDto(
                 event,
                 requestRepository.countByEvent_IdAndStatus(event.getId(), CONFIRMED),
-                getEventsViewsCount(List.of(event.getId())).getOrDefault(event.getId(), 0L)
+                getEventsViewsCount(List.of(event.getId())).getOrDefault(event.getId(), 0L),
+                commentRepository.countByEvent_Id(event.getId())
         );
     }
 
-    private List<EventResponseDto> getStatsAndMapToResponseDtos(List<Event> events) {
+    private List<EventResponseDto> getStatsAndMapToResponseDtos(Collection<Event> events) {
         Collection<Long> eventIds = events.stream().map(Event::getId).collect(Collectors.toList());
         Map<Long, Long> confirmedRequests = getConfirmedRequestsCount(eventIds);
         Map<Long, Long> views = getEventsViewsCount(eventIds);
+        Map<Long, Long> comments = getCommentsCount(eventIds);
+
         return events
                 .stream()
                 .map(event -> mapEventToResponseDto(
                         event,
                         confirmedRequests.getOrDefault(event.getId(), 0L),
-                        views.getOrDefault(event.getId(), 0L))
+                        views.getOrDefault(event.getId(), 0L),
+                        comments.getOrDefault(event.getId(), 0L))
                 ).collect(Collectors.toList());
     }
 
@@ -305,13 +312,15 @@ public class EventServiceImpl implements EventService {
         Collection<Long> eventIds = events.stream().map(Event::getId).collect(Collectors.toList());
         Map<Long, Long> confirmedRequests = getConfirmedRequestsCount(eventIds);
         Map<Long, Long> views = getEventsViewsCount(eventIds);
+        Map<Long, Long> comments = getCommentsCount(eventIds);
 
         return events
                 .stream()
                 .map(event -> mapEventToShortResponseDto(
                         event,
                         confirmedRequests.getOrDefault(event.getId(), 0L),
-                        views.getOrDefault(event.getId(), 0L))
+                        views.getOrDefault(event.getId(), 0L),
+                        comments.getOrDefault(event.getId(), 0L))
                 ).collect(Collectors.toList());
     }
 
@@ -322,6 +331,15 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toMap(ConfirmedRequestCount::getEventId, ConfirmedRequestCount::getConfirmed));
         log.trace("Получены списки подтверждённых запросов: {}", confirmedRequestCounts);
         return confirmedRequestCounts;
+    }
+
+    private Map<Long, Long> getCommentsCount(Collection<Long> eventIds) {
+        Map<Long, Long> commentsCount = commentRepository
+                .countAllByEvent_Id(eventIds)
+                .stream()
+                .collect(Collectors.toMap(CommentsCount::getEventId, CommentsCount::getComments));
+        log.trace("Получены списки подтверждённых запросов: {}", commentsCount);
+        return commentsCount;
     }
 
     private Map<Long, Long> getEventsViewsCount(Collection<Long> eventsUris) {

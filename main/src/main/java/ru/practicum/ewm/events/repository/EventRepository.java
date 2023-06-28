@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import ru.practicum.ewm.events.model.Event;
+import ru.practicum.ewm.events.model.EventState;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +16,8 @@ public interface EventRepository extends
     boolean existsByCategoryId(long categoryId);
 
     boolean existsByInitiator_IdAndId(long userId, long eventId);
+
+    boolean existsByIdAndState(long eventId, EventState state);
 
     List<Event> findAllByInitiator_Id(long userId, Pageable pageable);
 
